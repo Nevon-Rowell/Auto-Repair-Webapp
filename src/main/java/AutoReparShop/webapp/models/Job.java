@@ -1,21 +1,26 @@
-package models
+package AutoReparShop.webapp.models;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+
 @Entity
 public class Job{
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private int jobID;
     private String jobStatus;
     private String jobNotes;
     private String leadMech;
 
-    public int getJobID() {
+    public int getJobID(){
         return jobID;
     }
 
-    public void setJobID(int jobID) {
+    public void setJobID(int jobID){
         this.jobID = jobID;
     }
 
-    public void setJobNotes(String jobNotes) {
+    public void setJobNotes(String jobNotes){
         this.jobNotes = jobNotes;
     }
 
@@ -23,7 +28,7 @@ public class Job{
         return jobNotes;
     }
 
-    public void setJobStatus(String jobStatus) {
+    public void setJobStatus(String jobStatus){
         this.jobStatus = jobStatus;
     }
 
