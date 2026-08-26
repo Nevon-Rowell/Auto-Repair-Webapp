@@ -35,4 +35,11 @@ public class Job{
     public String getJobStatus() {
         return jobStatus;
     }
+
+    public void setLeadMech(String mechanic){
+        this.leadMech = mechanic;
+    }
+    public String getLeadMech(){
+        return leadMech;
+    }
 }

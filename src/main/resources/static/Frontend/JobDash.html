@@ -1,0 +1,73 @@
+<html>
+<body>
+<input type="text" id="mechanic-input" placeholder="Lead Mechanic">
+<input type="text" id="Notes-input" placeholder="Repair Notes">
+<button onclick="CreateNewJob()">Add New Job</button>
+<table>
+    <thead>
+    <tr>
+    <th>Job ID</th>
+    <th>Lead Mechanic</th>
+    <th>Job Status</th>
+    <th>Job Notes</th>
+    <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id ="job-table-body">
+    <script>
+        function CreateNewJob() {
+            let mechanic = document.getElementById('mechanic-input').value;
+            let Notes = document.getElementById('Notes-input').value;
+            let JobData = {
+                leadMech: mechanic,
+                jobNotes: Notes,
+                jobStatus: "Pending"
+            };
+            fetch(`http://localhost:8080/api/jobs`,{
+                method: 'POST',
+                headers:{'Content-type': 'application/JSON'},
+                body: JSON.stringify(JobData)
+            })
+                .then(() => window.location.reload());
+        }
+        function UpdateJobStatus(id) {
+            let newStatus = prompt("Enter new status (Pending Or Completed): ");
+            let jobData = {jobStatus: newStatus};
+            fetch(`http://localhost:8080/api/jobs/${id}`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(jobData)
+            })
+                .then(() => window.location.reload());
+        }
+        function DeleteJob(id) {
+            if(confirm("Are you sure you want to Delete this job")) {
+                fetch(`http://localhost:8080/api/jobs/${id}`,{
+                    method: `DELETE`,
+                })
+                    .then(() => window.location.reload());
+            }
+        }
+        fetch('http://localhost:8080/api/jobs')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('job-table-body');
+                data.forEach(Job => {
+                    let row = `
+                     <tr>
+                        <td>${Job.jobID}</td>
+                        <td>${Job.leadMech}</td>
+                        <td>${Job.jobStatus}</td>
+                        <td>${Job.jobNotes}</td>
+                        <td><button onclick="UpdateJobStatus(${Job.jobID})">
+                            <button onclick="DeleteJob(${Job.jobID})"></td>
+                     </tr>
+                    `
+                    tableBody.innerHTML += row;
+                });
+            });
+    </script>
+    </tbody>
+</table>
+</body>
+</html>
