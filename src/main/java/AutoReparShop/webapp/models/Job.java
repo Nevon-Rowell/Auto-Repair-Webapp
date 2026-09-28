@@ -11,7 +11,7 @@ public class Job{
     private int jobID;
     private String jobStatus;
     private String jobNotes;
-    private String leadMech;
+    private String licensePlateNO;
 
     public int getJobID(){
         return jobID;
@@ -37,10 +37,10 @@ public class Job{
         return jobStatus;
     }
 
-    public void setLeadMech(String mechanic){
-        this.leadMech = mechanic;
+    public void setLicensePlateNO(String plateNO){
+        this.licensePlateNO = plateNO;
     }
-    public String getLeadMech(){
-        return leadMech;
+    public String getLicensePlateNO(){
+        return licensePlateNO;
     }
 }

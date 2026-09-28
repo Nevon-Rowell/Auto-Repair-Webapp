@@ -4,14 +4,14 @@
 </head>
 <body>
 <div class="container mt-5">
-<input class="form-control mb-3" type="text" id="mechanic-input" placeholder="Lead Mechanic">
+<input class="form-control mb-3" type="text" id="plate-input" placeholder="License Plate">
 <input class="form-control mb-3" type="text" id="Notes-input" placeholder="Repair Details">
 <button class="btn btn-primary mb-3" onclick="CreateNewJob()">Add New Job</button>
 <table class="table table-hover table-bordered shadow-sm">
     <thead class="table-dark">
     <tr>
     <th>Job ID</th>
-    <th>Lead Mechanic</th>
+    <th>License Plate</th>
     <th>Job Status</th>
     <th>Job Description</th>
     <th>Actions</th>
@@ -20,10 +20,10 @@
     <tbody id ="job-table-body">
     <script>
         function CreateNewJob() {
-            let mechanic = document.getElementById('mechanic-input').value;
+            let Plate = document.getElementById('plate-input').value;
             let Notes = document.getElementById('Notes-input').value;
             let JobData = {
-                leadMech: mechanic,
+                licensePlateNO: Plate,
                 jobNotes: Notes,
                 jobStatus: "Pending"
             };
@@ -60,7 +60,7 @@
                     let row = `
                      <tr>
                         <td>${Job.jobID}</td>
-                        <td>${Job.leadMech}</td>
+                        <td>${Job.licensePlateNO}</td>
                         <td>${Job.jobStatus}</td>
                         <td>${Job.jobNotes}</td>
                         <td><button class="btn btn-sm btn-success me-2" onclick="UpdateJobStatus(${Job.jobID})">
