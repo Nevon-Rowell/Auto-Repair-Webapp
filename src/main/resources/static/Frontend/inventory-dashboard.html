@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inventory | Auto Repair Shop</title>
+    <link rel="stylesheet" href="inventory.css">
+</head>
+<body>
+
+<header class="topbar">
+    <h1>Auto Repair Shop</h1>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="JobDashboard.html">Jobs</a>
+        <a href="inventory.html" class="active">Inventory</a>
+    </nav>
+</header>
+
+<main class="page">
+
+    <section class="summary">
+        <div class="stat"><span class="stat-num">128</span> parts in stock</div>
+        <div class="stat warn"><span class="stat-num">6</span> running low</div>
+        <div class="stat"><span class="stat-num">3</span> orders pending</div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head">
+            <h2>Spare parts</h2>
+            <input type="search" id="search" placeholder="Search by part name">
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Part name</th>
+                    <th>Supplier</th>
+                    <th class="num">Cost</th>
+                    <th class="num">Selling price</th>
+                    <th class="num">Stock</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Brake pad (front)</td>
+                    <td>AutoLanka Supplies</td>
+                    <td class="num">2,500</td>
+                    <td class="num">3,500</td>
+                    <td class="num"><span class="badge ok">24</span></td>
+                    <td><button class="btn small">Edit</button> <button class="btn small danger">Delete</button></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Engine oil filter</td>
+                    <td>Prime Parts Ltd</td>
+                    <td class="num">900</td>
+                    <td class="num">1,400</td>
+                    <td class="num"><span class="badge low">3</span></td>
+                    <td><button class="btn small">Edit</button> <button class="btn small danger">Delete</button></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Spark plug set</td>
+                    <td>AutoLanka Supplies</td>
+                    <td class="num">4,200</td>
+                    <td class="num">5,800</td>
+                    <td class="num"><span class="badge ok">12</span></td>
+                    <td><button class="btn small">Edit</button> <button class="btn small danger">Delete</button></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Add a spare part</h2>
+        <form class="form-grid" onsubmit="return false;">
+            <label>Part name
+                <input type="text" placeholder="e.g. Air filter">
+            </label>
+            <label>Supplier
+                <select>
+                    <option>AutoLanka Supplies</option>
+                    <option>Prime Parts Ltd</option>
+                </select>
+            </label>
+            <label>Cost price
+                <input type="number" min="0" placeholder="0.00">
+            </label>
+            <label>Selling price
+                <input type="number" min="0" placeholder="0.00">
+            </label>
+            <label>Stock quantity
+                <input type="number" min="0" placeholder="0">
+            </label>
+            <label class="wide">Description
+                <textarea rows="2" placeholder="Short note about the part"></textarea>
+            </label>
+            <div class="wide">
+                <button type="submit" class="btn">Save part</button>
+            </div>
+        </form>
+    </section>
+
+</main>
+
+</body>
+</html>
