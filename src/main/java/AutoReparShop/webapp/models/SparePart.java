@@ -1,14 +1,19 @@
 package AutoReparShop.webapp.models;
 
-public class SparePart {
+import jakarta.persistence.*;
+import java.util.List;
 
+@Entity
+@Table(name = "SparePart")
+public class SparePart {
+    @Id
     private int PartID;
     private String PartName;
     private String Category;
     private String Description;
     private double CostPrice;
     private double SellingPrice;
-    private int StockQty;
+    private int StockQuantity;
     private int SupplierID;
 
     public SparePart() {}
@@ -21,7 +26,7 @@ public class SparePart {
         this.Description = description;
         this.CostPrice = costPrice;
         this.SellingPrice = sellingPrice;
-        this.StockQty = stockQty;
+        this.StockQuantity = stockQty;
         this.SupplierID = supplierID;
     }
 
@@ -43,8 +48,8 @@ public class SparePart {
     public double getSellingPrice() { return SellingPrice; }
     public void setSellingPrice(double sellingPrice) { this.SellingPrice = sellingPrice; }
 
-    public int getStockQty() { return StockQty; }
-    public void setStockQty(int stockQty) { this.StockQty = stockQty; }
+    public int getStockQuantity() { return StockQuantity; }
+    public void setStockQuantity(int stockQty) { this.StockQuantity = stockQty; }
 
     public int getSupplierID() { return SupplierID; }
     public void setSupplierID(int supplierID) { this.SupplierID = supplierID; }
