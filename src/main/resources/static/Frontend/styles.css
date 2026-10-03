@@ -1,3 +1,33 @@
 h1{
     color: lawngreen;
 }
+     /* Custom UI Enhancements */
+ .navbar-brand img {
+     max-height: 50px; /* Prevents the logo from taking up too much vertical space */
+     width: auto;
+     border-radius: 4px;
+ }
+
+.carousel-item video,
+.carousel-item img {
+    height: 600px;
+    width: 100%;
+    object-fit: cover; /* Ensures videos/images fill the space without stretching */
+}
+
+/* Styling for the new action blocks */
+.action-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 15px;
+}
+
+.action-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important;
+}
+
+.action-icon {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+}

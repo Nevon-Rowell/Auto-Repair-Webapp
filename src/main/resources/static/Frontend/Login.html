@@ -1,0 +1,651 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Smooth transitions for UI states */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+        /* Custom spinner animation */
+        .loader {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-left-color: #ffffff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex items-center justify-center p-4">
+
+    <div id="auth-container" class="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-300">-->
+        
+        <!--
+        <div id="auth-view" class="p-8 sm:p-10">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h2 id="form-title" class="text-2xl font-bold text-gray-800">Welcome Back</h2>
+                <p id="form-subtitle" class="text-sm text-gray-500 mt-2">Please enter your details to sign in.</p>
+            </div>
+
+
+            <div id="message-banner" class="hidden mb-6 p-4 rounded-lg text-sm font-medium"></div>
+
+            <form id="auth-form" class="space-y-5">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                            </svg>
+                        </div>
+                        <input id="email" name="email" type="email" required autocomplete="email" 
+                               class="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors sm:text-sm" 
+                               placeholder="you@example.com">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <input id="password" name="password" type="password" required autocomplete="current-password" 
+                               class="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors sm:text-sm" 
+                               placeholder="••••••••">
+                    </div>
+                </div>
+
+                <div id="forgot-password-container" class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                    </div>
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" id="submit-btn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed">
+                        <span id="submit-text">Sign In</span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    <span id="toggle-text">Don't have an account?</span> 
+                    <button type="button" id="toggle-mode-btn" class="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition-colors">
+                        Sign up
+                    </button>
+                </p>
+            </div>
+        </div>
+
+
+        <div id="dashboard-view" class="hidden p-8 sm:p-10 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-6">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Successfully Logged In!</h2>
+            <p class="text-gray-500 mb-6">Welcome back, <span id="user-email-display" class="font-medium text-gray-800"></span></p>
+            
+            <div class="bg-slate-50 rounded-xl p-6 mb-8 text-left border border-slate-100">
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Your Profile details</h3>
+                <div class="space-y-2">
+                    <p class="text-sm"><span class="font-medium text-gray-600">User ID:</span> <span id="user-id-display" class="text-gray-800 text-xs font-mono"></span></p>
+                    <p class="text-sm"><span class="font-medium text-gray-600">Status:</span> <span class="text-green-600 font-medium">Active Session</span></p>
+                </div>
+            </div>
+
+            <button id="logout-btn" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                Sign Out
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // Firebase Configuration fallback (In the immersive environment, __firebase_config is typically provided)
+        let firebaseConfig;
+        try {
+            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+                // Dummy config for fallback to prevent immediate syntax errors if run outside the environment.
+                // Note: Authentication will fail gracefully with API key errors if a real config isn't provided.
+                apiKey: "DEMO_API_KEY",
+                authDomain: "demo.firebaseapp.com",
+                projectId: "demo-project"
+            };
+        } catch (e) {
+            console.error("Failed to parse firebase config", e);
+        }
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // --- DOM Elements ---
+        // Views
+        const authView = document.getElementById('auth-view');
+        const dashboardView = document.getElementById('dashboard-view');
+        
+        // Form Elements
+        const authForm = document.getElementById('auth-form');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const submitBtn = document.getElementById('submit-btn');
+        const submitText = document.getElementById('submit-text');
+        
+        // Dynamic Text Elements
+        const formTitle = document.getElementById('form-title');
+        const formSubtitle = document.getElementById('form-subtitle');
+        const toggleModeBtn = document.getElementById('toggle-mode-btn');
+        const toggleText = document.getElementById('toggle-text');
+        const forgotPasswordContainer = document.getElementById('forgot-password-container');
+        
+        // Messaging
+        const messageBanner = document.getElementById('message-banner');
+        
+        // Dashboard Elements
+        const userEmailDisplay = document.getElementById('user-email-display');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // --- State ---
+        let isLoginMode = true;
+
+        // --- Functions ---
+
+        // Toggle between Login and Signup modes
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            hideMessage();
+            
+            // Add a brief fade effect
+            authView.classList.remove('fade-enter-active');
+            void authView.offsetWidth; // trigger reflow
+            authView.classList.add('fade-enter-active');
+
+            if (isLoginMode) {
+                formTitle.textContent = 'Welcome Back';
+                formSubtitle.textContent = 'Please enter your details to sign in.';
+                submitText.textContent = 'Sign In';
+                toggleText.textContent = "Don't have an account?";
+                toggleModeBtn.textContent = 'Sign up';
+                forgotPasswordContainer.style.display = 'flex';
+            } else {
+                formTitle.textContent = 'Create an Account';
+                formSubtitle.textContent = 'Enter your information to get started.';
+                submitText.textContent = 'Sign Up';
+                toggleText.textContent = 'Already have an account?';
+                toggleModeBtn.textContent = 'Sign in';
+                forgotPasswordContainer.style.display = 'none'; // Hide forgot password on signup
+            }
+        }
+
+        // Display Success/Error Messages
+        function showMessage(message, type = 'error') {
+            messageBanner.textContent = message;
+            messageBanner.className = `mb-6 p-4 rounded-xl text-sm font-medium ${
+                type === 'error' 
+                    ? 'bg-red-50 text-red-700 border border-red-100' 
+                    : 'bg-green-50 text-green-700 border border-green-100'
+            }`;
+            messageBanner.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            messageBanner.classList.add('hidden');
+            messageBanner.textContent = '';
+        }
+
+        // Manage Loading State of the Submit Button
+        function setLoading(isLoading) {
+            if (isLoading) {
+                submitBtn.disabled = true;
+                submitText.innerHTML = `<span class="loader"></span> ${isLoginMode ? 'Signing in...' : 'Creating account...'}`;
+            } else {
+                submitBtn.disabled = false;
+                submitText.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
+            }
+        }
+
+        // Handle Form Submission (Login or Signup)
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessage();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                showMessage("Please fill in all fields.");
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                if (isLoginMode) {
+                    // Firebase Sign In
+                    await signInWithEmailAndPassword(auth, email, password);
+                    // On success, onAuthStateChanged will handle the UI update
+                } else {
+                    // Firebase Sign Up
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    showMessage("Account created successfully!", "success");
+                    // On success, onAuthStateChanged will handle the UI update
+                }
+            } catch (error) {
+                console.error("Auth Error:", error);
+                // Map common Firebase errors to user-friendly messages
+                let friendlyMessage = "An error occurred during authentication.";
+                switch (error.code) {
+                    case 'auth/invalid-credential':
+                    case 'auth/wrong-password':
+                    case 'auth/user-not-found':
+                        friendlyMessage = "Invalid email or password.";
+                        break;
+                    case 'auth/email-already-in-use':
+                        friendlyMessage = "An account with this email already exists.";
+                        break;
+                    case 'auth/weak-password':
+                        friendlyMessage = "Password should be at least 6 characters.";
+                        break;
+                    case 'auth/invalid-email':
+                        friendlyMessage = "Please enter a valid email address.";
+                        break;
+                    case 'auth/invalid-api-key':
+                        friendlyMessage = "Configuration error: Missing or invalid Firebase API Key.";
+                        break;
+                }
+                showMessage(friendlyMessage, "error");
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Handle Logout
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Error signing out:", error);
+                alert("Failed to sign out.");
+            }
+        });
+
+        // Toggle Event Listener
+        toggleModeBtn.addEventListener('click', toggleMode);
+
+        // Listen to Firebase Auth State Changes to update the UI
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                authView.classList.add('hidden');
+                dashboardView.classList.remove('hidden');
+                
+                // Update Dashboard with user info
+                userEmailDisplay.textContent = user.email;
+                userIdDisplay.textContent = user.uid;
+                
+                // Clear form for security
+                authForm.reset();
+            } else {
+                // User is signed out
+                dashboardView.classList.add('hidden');
+                authView.classList.remove('hidden');
+                
+                // Reset to login mode if they logged out
+                if (!isLoginMode) toggleMode();
+                hideMessage();
+            }
+        });
+
+    </script>
+</body>
+</html>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Smooth transitions for UI states */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+        /* Custom spinner animation */
+        .loader {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-left-color: #ffffff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex items-center justify-center p-4">
+
+<div id="auth-container" class="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-300">
+
+    <!-- Main Authentication Form View -->
+    <div id="auth-view" class="p-8 sm:p-10">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+            </div>
+            <h2 id="form-title" class="text-2xl font-bold text-gray-800">Welcome Back</h2>
+            <p id="form-subtitle" class="text-sm text-gray-500 mt-2">Please enter your details to sign in.</p>
+        </div>
+
+        <!-- Message Banner (Error/Success) -->
+        <div id="message-banner" class="hidden mb-6 p-4 rounded-lg text-sm font-medium"></div>
+
+        <form id="auth-form" class="space-y-5">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                        </svg>
+                    </div>
+                    <input id="email" name="email" type="email" required autocomplete="email"
+                           class="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors sm:text-sm"
+                           placeholder="you@example.com">
+                </div>
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <input id="password" name="password" type="password" required autocomplete="current-password"
+                           class="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors sm:text-sm"
+                           placeholder="••••••••">
+                </div>
+            </div>
+
+            <div id="forgot-password-container" class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                    <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                </div>
+                <div class="text-sm">
+                    <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" id="submit-btn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed">
+                    <span id="submit-text">Sign In</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+                <span id="toggle-text">Don't have an account?</span>
+                <button type="button" id="toggle-mode-btn" class="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition-colors">
+                    Sign up
+                </button>
+            </p>
+        </div>
+    </div>
+
+    <!-- Logged In View (Hidden by default) -->
+    <div id="dashboard-view" class="hidden p-8 sm:p-10 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-6">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Successfully Logged In!</h2>
+        <p class="text-gray-500 mb-6">Welcome back, <span id="user-email-display" class="font-medium text-gray-800"></span></p>
+
+        <div class="bg-slate-50 rounded-xl p-6 mb-8 text-left border border-slate-100">
+            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Your Profile details</h3>
+            <div class="space-y-2">
+                <p class="text-sm"><span class="font-medium text-gray-600">User ID:</span> <span id="user-id-display" class="text-gray-800 text-xs font-mono"></span></p>
+                <p class="text-sm"><span class="font-medium text-gray-600">Status:</span> <span class="text-green-600 font-medium">Active Session</span></p>
+            </div>
+        </div>
+
+        <button id="logout-btn" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+            Sign Out
+        </button>
+    </div>
+</div>
+
+<script>
+    // --- DOM Elements ---
+    const authView = document.getElementById('auth-view');
+    const dashboardView = document.getElementById('dashboard-view');
+
+    const authForm = document.getElementById('auth-form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const submitBtn = document.getElementById('submit-btn');
+    const submitText = document.getElementById('submit-text');
+
+    const formTitle = document.getElementById('form-title');
+    const formSubtitle = document.getElementById('form-subtitle');
+    const toggleModeBtn = document.getElementById('toggle-mode-btn');
+    const toggleText = document.getElementById('toggle-text');
+    const forgotPasswordContainer = document.getElementById('forgot-password-container');
+
+    const messageBanner = document.getElementById('message-banner');
+
+    const userEmailDisplay = document.getElementById('user-email-display');
+    const userIdDisplay = document.getElementById('user-id-display');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // --- API Configuration ---
+    const API_BASE_URL = 'http://localhost:8080/api/auth';
+    let isLoginMode = true;
+
+    // --- Functions ---
+    function toggleMode() {
+        isLoginMode = !isLoginMode;
+        hideMessage();
+
+        authView.classList.remove('fade-enter-active');
+        void authView.offsetWidth; // trigger reflow
+        authView.classList.add('fade-enter-active');
+
+        if (isLoginMode) {
+            formTitle.textContent = 'Welcome Back';
+            formSubtitle.textContent = 'Please enter your details to sign in.';
+            submitText.textContent = 'Sign In';
+            toggleText.textContent = "Don't have an account?";
+            toggleModeBtn.textContent = 'Sign up';
+            forgotPasswordContainer.style.display = 'flex';
+        } else {
+            formTitle.textContent = 'Create an Account';
+            formSubtitle.textContent = 'Enter your information to get started.';
+            submitText.textContent = 'Sign Up';
+            toggleText.textContent = 'Already have an account?';
+            toggleModeBtn.textContent = 'Sign in';
+            forgotPasswordContainer.style.display = 'none';
+        }
+    }
+
+    function showMessage(message, type = 'error') {
+        messageBanner.textContent = message;
+        messageBanner.className = `mb-6 p-4 rounded-xl text-sm font-medium ${
+            type === 'error'
+                ? 'bg-red-50 text-red-700 border border-red-100'
+                : 'bg-green-50 text-green-700 border border-green-100'
+        }`;
+        messageBanner.classList.remove('hidden');
+    }
+
+    function hideMessage() {
+        messageBanner.classList.add('hidden');
+        messageBanner.textContent = '';
+    }
+
+    function setLoading(isLoading) {
+        if (isLoading) {
+            submitBtn.disabled = true;
+            submitText.innerHTML = `<span class="loader"></span> ${isLoginMode ? 'Signing in...' : 'Creating account...'}`;
+        } else {
+            submitBtn.disabled = false;
+            submitText.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
+        }
+    }
+
+    // Manage UI based on user authentication state
+    function updateAuthUI(user) {
+        if (user) {
+            // User is signed in
+            authView.classList.add('hidden');
+            dashboardView.classList.remove('hidden');
+
+            // Assuming your backend returns these fields (Adjust based on your JSON map)
+            userEmailDisplay.textContent = user.email || emailInput.value;
+            userIdDisplay.textContent = user.customerId || user.id || 'N/A';
+
+            authForm.reset();
+        } else {
+            // User is signed out
+            dashboardView.classList.add('hidden');
+            authView.classList.remove('hidden');
+            if (!isLoginMode) toggleMode();
+            hideMessage();
+        }
+    }
+
+    // Check for existing session on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedUser = localStorage.getItem('app_user');
+        if (savedUser) {
+            updateAuthUI(JSON.parse(savedUser));
+        }
+    });
+
+    // Handle Form Submission with Spring Boot API
+    authForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideMessage();
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!email || !password) {
+            showMessage("Please fill in all fields.");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            // Point to your Spring Boot Login or Signup endpoint
+            const endpoint = isLoginMode ? `${API_BASE_URL}/login` : `${API_BASE_URL}/signup`;
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                if (isLoginMode) {
+                    // Store user session data in browser
+                    localStorage.setItem('app_user', JSON.stringify(data));
+                    window.location.href = 'JobDash.html';
+                    updateAuthUI(data);
+                } else {
+                    // For signup, switch back to login mode so they can sign in
+                    showMessage("Account created successfully! Please sign in.", "success");
+                    toggleMode();
+                }
+            } else {
+                // Show error message returned from Spring Boot
+                showMessage(data.message || "Authentication failed. Please check your credentials.", "error");
+            }
+        } catch (error) {
+            console.error("Auth Error:", error);
+            showMessage("Cannot connect to server. Please ensure the backend is running.", "error");
+        } finally {
+            setLoading(false);
+        }
+    });
+
+    // Handle Logout
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('app_user');
+        updateAuthUI(null);
+    });
+
+    // Event Listener for the mode toggle
+    toggleModeBtn.addEventListener('click', toggleMode);
+
+</script>
+</body>
+</html>
