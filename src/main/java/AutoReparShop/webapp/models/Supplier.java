@@ -2,6 +2,9 @@ package AutoReparShop.webapp.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "Supplier")
 
@@ -21,6 +24,9 @@ public class Supplier {
 
     @Column(name = "Email")
     private String email;
+
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL ,orphanRemoval = true)
+    private List<SparePart> spareparts = new ArrayList<>();
 
     public Supplier() {
     }

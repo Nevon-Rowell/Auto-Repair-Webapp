@@ -1,33 +1,46 @@
 package AutoReparShop.webapp.models;
 
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "SparePart")
 public class SparePart {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Column(name = "partID")
     private int PartID;
+
+    @Column(name = "partName")
     private String PartName;
+
+    @Column(name = "category")
     private String Category;
-    private String Description;
-    private double CostPrice;
+
+    @Column(name = "sellingPrice")
     private double SellingPrice;
+
+    @Column(name = "costPrice")
+    private double CostPrice;
+
+    @Column(name = "stockQuantity")
     private int StockQuantity;
-    private int SupplierID;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplierID", nullable = false)
+    private Supplier supplier;
 
     public SparePart() {}
 
-    public SparePart(int partID, String partName, String category, String description,
-                     double costPrice, double sellingPrice, int stockQty, int supplierID) {
+    public SparePart(int partID, String partName, String category,
+                     double costPrice, double sellingPrice, int stockQty, Supplier supplier) {
         this.PartID = partID;
         this.PartName = partName;
         this.Category = category;
-        this.Description = description;
         this.CostPrice = costPrice;
         this.SellingPrice = sellingPrice;
         this.StockQuantity = stockQty;
-        this.SupplierID = supplierID;
+        this.supplier = supplier;
     }
 
     public int getPartID() { return PartID; }
@@ -39,9 +52,6 @@ public class SparePart {
     public String getCategory() { return Category; }
     public void setCategory(String category) { this.Category = category; }
 
-    public String getDescription() { return Description; }
-    public void setDescription(String description) { this.Description = description; }
-
     public double getCostPrice() { return CostPrice; }
     public void setCostPrice(double costPrice) { this.CostPrice = costPrice; }
 
@@ -51,6 +61,6 @@ public class SparePart {
     public int getStockQuantity() { return StockQuantity; }
     public void setStockQuantity(int stockQty) { this.StockQuantity = stockQty; }
 
-    public int getSupplierID() { return SupplierID; }
-    public void setSupplierID(int supplierID) { this.SupplierID = supplierID; }
+    public Supplier getSupplier() { return supplier; }
+    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
 }
