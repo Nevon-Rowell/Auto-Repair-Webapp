@@ -1,8 +1,7 @@
 package AutoReparShop.webapp.models;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class Job{
@@ -43,4 +42,7 @@ public class Job{
     public String getLicensePlateNO(){
         return licensePlateNO;
     }
+    @OneToMany
+            (mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JobPart> parts;
 }
