@@ -1,28 +1,46 @@
 package AutoReparShop.webapp.models;
 
-public class SparePart {
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "SparePart")
+public class SparePart {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Column(name = "partID")
     private int PartID;
+
+    @Column(name = "partName")
     private String PartName;
+
+    @Column(name = "category")
     private String Category;
-    private String Description;
-    private double CostPrice;
+
+    @Column(name = "sellingPrice")
     private double SellingPrice;
-    private int StockQty;
-    private int SupplierID;
+
+    @Column(name = "costPrice")
+    private double CostPrice;
+
+    @Column(name = "stockQuantity")
+    private int StockQuantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplierID", nullable = false)
+    private Supplier supplier;
 
     public SparePart() {}
 
-    public SparePart(int partID, String partName, String category, String description,
-                     double costPrice, double sellingPrice, int stockQty, int supplierID) {
+    public SparePart(int partID, String partName, String category,
+                     double costPrice, double sellingPrice, int stockQty, Supplier supplier) {
         this.PartID = partID;
         this.PartName = partName;
         this.Category = category;
-        this.Description = description;
         this.CostPrice = costPrice;
         this.SellingPrice = sellingPrice;
-        this.StockQty = stockQty;
-        this.SupplierID = supplierID;
+        this.StockQuantity = stockQty;
+        this.supplier = supplier;
     }
 
     public int getPartID() { return PartID; }
@@ -34,18 +52,15 @@ public class SparePart {
     public String getCategory() { return Category; }
     public void setCategory(String category) { this.Category = category; }
 
-    public String getDescription() { return Description; }
-    public void setDescription(String description) { this.Description = description; }
-
     public double getCostPrice() { return CostPrice; }
     public void setCostPrice(double costPrice) { this.CostPrice = costPrice; }
 
     public double getSellingPrice() { return SellingPrice; }
     public void setSellingPrice(double sellingPrice) { this.SellingPrice = sellingPrice; }
 
-    public int getStockQty() { return StockQty; }
-    public void setStockQty(int stockQty) { this.StockQty = stockQty; }
+    public int getStockQuantity() { return StockQuantity; }
+    public void setStockQuantity(int stockQty) { this.StockQuantity = stockQty; }
 
-    public int getSupplierID() { return SupplierID; }
-    public void setSupplierID(int supplierID) { this.SupplierID = supplierID; }
+    public Supplier getSupplier() { return supplier; }
+    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
 }
