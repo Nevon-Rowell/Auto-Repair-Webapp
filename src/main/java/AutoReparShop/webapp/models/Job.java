@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table (name = "job")
 public class Job{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int jobID;
     private String jobStatus;
     private String jobNotes;
+    @Column (name = "license_plateno")
     private String licensePlateNO;
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
