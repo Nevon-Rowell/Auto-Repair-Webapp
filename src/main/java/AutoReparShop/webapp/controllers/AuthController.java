@@ -2,7 +2,9 @@ package AutoReparShop.webapp.controllers;
 
 import AutoReparShop.webapp.LoginRequest;
 import AutoReparShop.webapp.models.Customer;
+import AutoReparShop.webapp.models.Employee;
 import AutoReparShop.webapp.repositories.CustomerRepository;
+import AutoReparShop.webapp.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,33 +21,40 @@ public class AuthController {
 
     @Autowired
     private CustomerRepository customerRepository;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginCustomer(@RequestBody LoginRequest loginRequest) {
-        // 1. Find the user by their email
-        Optional<Customer> customerOpt = customerRepository.findByEmail(loginRequest.getEmail());
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
 
+        // 1. Check if the user is a Customer
+        Optional<Customer> customerOpt = customerRepository.findByEmail(loginRequest.getEmail());
         if (customerOpt.isPresent()) {
             Customer customer = customerOpt.get();
-
-            // 2. Check if the provided password matches the hashed password in the DB
             if (passwordEncoder.matches(loginRequest.getPassword(), customer.getPasswordHash())) {
-
-                // Login successful - use a standard HashMap to prevent NullPointerExceptions
-                java.util.Map<String, Object> response = new java.util.HashMap<>();
                 response.put("status", "success");
-                response.put("message", "Login successful");
-                response.put("customerId", customer.getCustomerID());
-                response.put("firstName", customer.getFirstName()); // Safely handles null
-
+                response.put("id", customer.getCustomerID());
+                response.put("role", "CUSTOMER"); // Explicitly define the role
                 return ResponseEntity.ok(response);
             }
         }
 
-        // 3. Login failed (either email not found, or password doesn't match)
+        // 2. Check if the user is an Employee (Mechanic, Admin, etc.)
+        Optional<Employee> employeeOpt = employeeRepository.findByEmail(loginRequest.getEmail());
+        if (employeeOpt.isPresent()) {
+            Employee employee = employeeOpt.get();
+            if (passwordEncoder.matches(loginRequest.getPassword(), employee.getPasswordHash())) {
+                response.put("status", "success");
+                response.put("id", employee.getEmployeeID());
+                response.put("role", employee.getRole()); // Dynamically pull their specific role
+                return ResponseEntity.ok(response);
+            }
+        }
+
+        // 3. Login failed
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(java.util.Map.of("status", "error", "message", "Invalid email or password"));
     }
