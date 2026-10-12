@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AUTOFLIX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="Admin-styles.css">
+    <style>
+        /* Custom Aesthetic Matching image_fe0bfe.png */
+
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-black shadow">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="FB_IMG_1787760750663_cropped.jpg" alt="Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" aria-current="page">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Services</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">About Us</a></li>
+                        <li><a class="dropdown-item" href="#">Contact</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <form class="d-flex mx-auto w-50">
+                <input class="form-control me-2 rounded-pill" type="search" placeholder="Search..." aria-label="Search"/>
+                <button class="btn btn-outline-light rounded-pill px-4" type="submit">Search</button>
+            </form>
+
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-white fs-4" href="#" data-bs-toggle="modal" data-bs-target="#loginModal" title="User Profile / Login">
+                        <i class="bi bi-person-circle"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5 mb-5">
+    <!-- Page Header matching the image layout -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold mb-0">Admin Control Center</h1>
+            <p class="text-muted">Manage employees, override pricing, and log jobs.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Create Employee Panel -->
+        <div class="col-md-4">
+            <div class="card admin-card h-100">
+                <div class="card-header admin-card-header">
+                    Create Employee Account
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <input type="text" id="emp-firstName" class="form-control mb-3" placeholder="First Name">
+                    <input type="text" id="emp-lastName" class="form-control mb-3" placeholder="Last Name">
+                    <input type="email" id="emp-email" class="form-control mb-3" placeholder="Company Email">
+                    <input type="password" id="emp-password" class="form-control mb-3" placeholder="Temporary Password">
+                    <select id="emp-role" class="form-select mb-4">
+                        <option value="MECHANIC">Mechanic</option>
+                        <option value="RECEPTIONIST">Receptionist</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                    <button onclick="createEmployee()" class="btn btn-autoflix w-100 mt-auto">
+                        <i class="bi bi-person-plus"></i> Register Staff
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add New Job Panel -->
+        <div class="col-md-4">
+            <div class="card admin-card h-100">
+                <div class="card-header admin-card-header">
+                    Log New Job
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <input type="text" id="job-licensePlate" class="form-control mb-3" placeholder="License Plate (e.g., CAB-1234)">
+                    <textarea id="job-notes" class="form-control mb-4" rows="6" placeholder="Initial diagnostics or repair notes..."></textarea>
+                    <button onclick="createNewJob()" class="btn btn-autoflix w-100 mt-auto">
+                        <i class="bi bi-plus-circle"></i> Create Job
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Job Price Panel -->
+        <div class="col-md-4">
+            <div class="card admin-card h-100">
+                <div class="card-header admin-card-header">
+                    Override Job Price
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <input type="number" id="price-jobId" class="form-control mb-3" placeholder="Job ID Number">
+                    <div class="input-group mb-4">
+                        <span class="input-group-text bg-light">$</span>
+                        <input type="number" step="0.01" id="price-newAmount" class="form-control" placeholder="New Total Price">
+                    </div>
+                    <p class="text-muted small mb-4">Warning: This overrides the calculated parts and labor totals in the final invoice.</p>
+                    <button onclick="updateJobPrice()" class="btn btn-autoflix w-100 mt-auto">
+                        <i class="bi bi-currency-dollar"></i> Update Price
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    async function createEmployee() {
+        const payload = {
+            firstName: document.getElementById('emp-firstName').value,
+            lastName: document.getElementById('emp-lastName').value,
+            email: document.getElementById('emp-email').value,
+            password: document.getElementById('emp-password').value,
+            role: document.getElementById('emp-role').value
+        };
+
+        const response = await fetch('http://localhost:8080/api/auth/register-employee', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("Employee account created successfully.");
+            document.querySelectorAll('input').forEach(input => input.value = '');
+        } else {
+            alert("Failed to create employee.");
+        }
+    }
+
+    async function createNewJob() {
+        const payload = {
+            license_plateno: document.getElementById('job-licensePlate').value,
+            jobNotes: document.getElementById('job-notes').value,
+            jobStatus: "Pending"
+        };
+
+        const response = await fetch('http://localhost:8080/api/jobs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("New job logged successfully.");
+            document.getElementById('job-licensePlate').value = '';
+            document.getElementById('job-notes').value = '';
+        }
+    }
+
+    async function updateJobPrice() {
+        const jobId = document.getElementById('price-jobId').value;
+        const payload = {
+            newPrice: parseFloat(document.getElementById('price-newAmount').value)
+        };
+
+        const response = await fetch(`http://localhost:8080/api/jobs/${jobId}/update-price`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert(`Price for Job #${jobId} updated successfully.`);
+            document.getElementById('price-jobId').value = '';
+            document.getElementById('price-newAmount').value = '';
+        }
+    }
+</script>
+</body>
+</html>

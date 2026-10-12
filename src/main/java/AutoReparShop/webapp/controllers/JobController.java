@@ -1,10 +1,13 @@
 package AutoReparShop.webapp.controllers;
-import java.util.ArrayList;
-import java.util.List;
-import AutoReparShop.webapp.models.Job;
+
 import AutoReparShop.webapp.models.CustDashDTO;
+import AutoReparShop.webapp.models.Job;
+import AutoReparShop.webapp.models.Sale;
 import AutoReparShop.webapp.repositories.JobRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/jobs")

@@ -21,6 +21,7 @@ public class AuthController {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
     private EmployeeRepository employeeRepository;
 
     @Autowired

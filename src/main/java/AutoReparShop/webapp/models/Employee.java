@@ -41,4 +41,10 @@ public class Employee {
     public String getRole(){
         return role;
     }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 }
