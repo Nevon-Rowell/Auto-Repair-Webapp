@@ -89,4 +89,31 @@ public class AuthController {
                 "message", "Account created successfully"
         ));
     }
+    @PostMapping("/register-employee")
+    public ResponseEntity<?> registerEmployee(@RequestBody Map<String, String> payload) {
+        // 1. Check if an employee with this email already exists
+        if (employeeRepository.findByEmail(payload.get("email")).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("status", "error", "message", "Employee email is already in use"));
+        }
+
+        // 2. Map the JSON payload to a new Employee entity
+        Employee newEmployee = new Employee();
+        newEmployee.setFirstName(payload.get("firstName"));
+        newEmployee.setLastName(payload.get("lastName"));
+        newEmployee.setEmail(payload.get("email"));
+        newEmployee.setRole(payload.get("role")); // "MECHANIC", "RECEPTIONIST", or "ADMIN"
+
+        // 3. Securely hash the plain-text password before saving[cite: 3]
+        String hashedPassword = passwordEncoder.encode(payload.get("password"));
+        newEmployee.setPasswordHash(hashedPassword);
+
+        // 4. Save the employee to the database
+        employeeRepository.save(newEmployee);
+
+        return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "message", "Employee account created successfully"
+        ));
+    }
 }
