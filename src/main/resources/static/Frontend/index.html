@@ -198,29 +198,95 @@
 
                 <!-- Form -->
                 <form id="auth-form" class="text-start">
+
+                    <!-- First Name: Only shown during signup -->
+                    <div class="mb-3 d-none" id="firstName-container">
+                        <label for="firstName" class="form-label text-secondary small">
+                            First Name
+                        </label>
+                        <input type="text"
+                               class="form-control autoflix-input py-2 rounded-3"
+                               id="firstName"
+                               placeholder="Enter your first name">
+                    </div>
+
+                    <!-- Last Name: Only shown during signup -->
+                    <div class="mb-3 d-none" id="lastName-container">
+                        <label for="lastName" class="form-label text-secondary small">
+                            Last Name
+                        </label>
+                        <input type="text"
+                               class="form-control autoflix-input py-2 rounded-3"
+                               id="lastName"
+                               placeholder="Enter your last name">
+                    </div>
+
+                    <!-- Phone Number: Only shown during signup -->
+                    <div class="mb-3 d-none" id="phoneNumber-container">
+                        <label for="phoneNumber" class="form-label text-secondary small">
+                            Phone Number
+                        </label>
+                        <input type="tel"
+                               class="form-control autoflix-input py-2 rounded-3"
+                               id="phoneNumber"
+                               placeholder="Enter your phone number">
+                    </div>
+
+                    <!-- Email -->
                     <div class="mb-3">
-                        <label for="email" class="form-label text-secondary small">Email Address</label>
-                        <input type="email" class="form-control autoflix-input py-2 rounded-3" id="email" required placeholder="you@example.com">
+                        <label for="email" class="form-label text-secondary small">
+                            Email Address
+                        </label>
+                        <input type="email"
+                               class="form-control autoflix-input py-2 rounded-3"
+                               id="email"
+                               required
+                               placeholder="you@example.com">
                     </div>
 
+                    <!-- Password -->
                     <div class="mb-4">
-                        <label for="password" class="form-label text-secondary small">Password</label>
-                        <input type="password" class="form-control autoflix-input py-2 rounded-3" id="password" required placeholder="••••••••">
+                        <label for="password" class="form-label text-secondary small">
+                            Password
+                        </label>
+                        <input type="password"
+                               class="form-control autoflix-input py-2 rounded-3"
+                               id="password"
+                               required
+                               minlength="8"
+                               placeholder="Enter your password">
                     </div>
 
-                    <div id="forgot-password-container" class="d-flex justify-content-between align-items-center mb-4">
+                    <!-- Remember Me and Forgot Password: Login only -->
+                    <div id="forgot-password-container"
+                         class="d-flex justify-content-between align-items-center mb-4">
+
                         <div class="form-check">
-                            <input class="form-check-input bg-dark border-secondary" type="checkbox" id="remember-me">
-                            <label class="form-check-label text-secondary small" for="remember-me">Remember me</label>
+                            <input class="form-check-input bg-dark border-secondary"
+                                   type="checkbox"
+                                   id="remember-me">
+
+                            <label class="form-check-label text-secondary small"
+                                   for="remember-me">
+                                Remember me
+                            </label>
                         </div>
-                        <a href="#" class="text-success text-decoration-none small">Forgot password?</a>
+
+                        <a href="#"
+                           class="text-success text-decoration-none small">
+                            Forgot password?
+                        </a>
                     </div>
 
-                    <button type="submit" id="submit-btn" class="btn autoflix-btn w-100 py-2 rounded-3 transition-colors">
+                    <!-- Submit Button -->
+                    <button type="submit"
+                            id="submit-btn"
+                            class="btn autoflix-btn w-100 py-2 rounded-3 transition-colors">
+
                         <span id="submit-text">Sign In</span>
                     </button>
-                </form>
 
+                </form>
                 <div class="mt-4">
                     <p class="text-secondary small">
                         <span id="toggle-text">Don't have an account?</span>
@@ -320,97 +386,184 @@
     const submitText = document.getElementById('submit-text');
     const messageBanner = document.getElementById('message-banner');
     const forgotPasswordContainer = document.getElementById('forgot-password-container');
+    const firstNameContainer =
+        document.getElementById('firstName-container');
+
+    const lastNameContainer =
+        document.getElementById('lastName-container');
+
+    const phoneNumberContainer =
+        document.getElementById('phoneNumber-container');
+
+    const firstNameInput =
+        document.getElementById('firstName');
+
+    const lastNameInput =
+        document.getElementById('lastName');
+
+    const phoneNumberInput =
+        document.getElementById('phoneNumber');
 
     let isLoginMode = true;
     const API_BASE_URL = 'http://localhost:8080/api/auth';
 
     // Toggle between Login and Sign Up
-    toggleModeBtn.addEventListener('click', () => {
-        isLoginMode = !isLoginMode;
-        messageBanner.classList.add('d-none');
+toggleModeBtn.addEventListener('click', () => {
+    isLoginMode = !isLoginMode;
+    messageBanner.classList.add('d-none');
+    if (isLoginMode) {
+        // Login mode
+        formTitle.textContent = 'Welcome Back';
+        formSubtitle.textContent =
+            'Please enter your details to sign in.';
+        submitText.textContent = 'Sign In';
+        toggleText.textContent = "Don't have an account?";
+        toggleModeBtn.textContent = 'Sign up';
+        // Hide signup fields
+        firstNameContainer.classList.add('d-none');
+        lastNameContainer.classList.add('d-none');
+        phoneNumberContainer.classList.add('d-none');
 
-        if (isLoginMode) {
-            formTitle.textContent = 'Welcome Back';
-            formSubtitle.textContent = 'Please enter your details to sign in.';
-            submitText.textContent = 'Sign In';
-            toggleText.textContent = "Don't have an account?";
-            toggleModeBtn.textContent = 'Sign up';
-            forgotPasswordContainer.classList.remove('d-none');
-            forgotPasswordContainer.classList.add('d-flex');
-        } else {
-            formTitle.textContent = 'Create an Account';
-            formSubtitle.textContent = 'Enter your information to get started.';
-            submitText.textContent = 'Sign Up';
-            toggleText.textContent = 'Already have an account?';
-            toggleModeBtn.textContent = 'Sign in';
-            forgotPasswordContainer.classList.remove('d-flex');
-            forgotPasswordContainer.classList.add('d-none');
-        }
-    });
+        // Signup fields are not required during login
+        firstNameInput.required = false;
+        lastNameInput.required = false;
+        phoneNumberInput.required = false;
+
+        // Show login options
+        forgotPasswordContainer.classList.remove('d-none');
+        forgotPasswordContainer.classList.add('d-flex');
+
+    } else {
+
+        // Signup mode
+        formTitle.textContent = 'Create an Account';
+        formSubtitle.textContent =
+            'Enter your information to create your account.';
+        submitText.textContent = 'Sign Up';
+        toggleText.textContent = 'Already have an account?';
+        toggleModeBtn.textContent = 'Sign in';
+        // Show signup fields
+        firstNameContainer.classList.remove('d-none');
+        lastNameContainer.classList.remove('d-none');
+        phoneNumberContainer.classList.remove('d-none');
+        // Make signup fields required
+        firstNameInput.required = true;
+        lastNameInput.required = true;
+        phoneNumberInput.required = true;
+        // Hide login options
+        forgotPasswordContainer.classList.remove('d-flex');
+        forgotPasswordContainer.classList.add('d-none');
+    }
+});
 
     function showMessage(message, type = 'error') {
         messageBanner.textContent = message;
         messageBanner.className = `alert mb-4 ${type === 'error' ? 'alert-danger' : 'alert-success'}`;
         messageBanner.classList.remove('d-none');
     }
-
-    // Form Submission
-    authForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        messageBanner.classList.add('d-none');
-
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const submitBtn = document.getElementById('submit-btn');
-
-        submitBtn.disabled = true;
-        submitText.textContent = isLoginMode ? 'Signing in...' : 'Creating account...';
-
-        try {
-            const endpoint = isLoginMode ? `${API_BASE_URL}/login` : `${API_BASE_URL}/signup`;
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                if (isLoginMode) {
-                    // 1. Store the new unified ID and Role
-                    sessionStorage.setItem('userID', data.id);
-                    sessionStorage.setItem('userRole', data.role);
-
-                    // 2. Close the modal upon success
-                    const modalElement = document.getElementById('loginModal');
-                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                    modalInstance.hide();
-
-                    // 3. Role-based routing
-                    if (data.role === 'CUSTOMER') {
-                        document.getElementById("Customer-Dash").classList.remove("d-none");
-                    } else if (data.role === 'MECHANIC') {
-                        window.location.href = 'empDash.html';
-                    } else if (data.role === 'RECEPTIONIST') {
-                        window.location.href = 'receptionistDash.html';
-                    } else if (data.role === 'ADMIN' || data.role === 'DEV_ADMIN') {
-                        window.location.href = 'adminDash.html';
-                    }
-                } else {
-                    // Keeps your sign-up logic intact
-                    showMessage("Account created successfully! Please sign in.", "success");
-                    toggleModeBtn.click();
-                }
-            } else {
-                showMessage(data.message || "Authentication failed.", "error");
-            }
-        } catch (error) {
-            showMessage("Cannot connect to server.", "error");
-        } finally {
-            submitBtn.disabled = false;
-            submitText.textContent = isLoginMode ? 'Sign In' : 'Sign Up';
+// Form Submission
+authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    messageBanner.classList.add('d-none');
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const submitBtn = document.getElementById('submit-btn');
+    // Prepare the data
+    const requestData = {
+        email: email,
+        password: password
+    };
+    // Add customer information during signup
+    if (!isLoginMode) {
+        requestData.firstName = firstNameInput.value.trim();
+        requestData.lastName = lastNameInput.value.trim();
+        requestData.phoneNumber = phoneNumberInput.value.trim();
+        if (
+            !requestData.firstName ||
+            !requestData.lastName ||
+            !requestData.phoneNumber
+        ) {
+            showMessage(
+                'Please fill in all required fields.',
+                'error'
+            );
+            return;
         }
+    }
+    submitBtn.disabled = true;
+    submitText.textContent =
+        isLoginMode ? 'Signing in...' : 'Creating account...';
+    try {
+        const endpoint = isLoginMode
+            ? `${API_BASE_URL}/login`
+    : `${API_BASE_URL}/signup`;
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    });
+    const data = await response.json();
+    if (response.ok) {
+        if (isLoginMode) {
+            // Save logged-in user information
+            sessionStorage.setItem('userID', data.id);
+            sessionStorage.setItem('userRole', data.role);
+
+            // Close the login modal
+            const modalElement =
+                document.getElementById('loginModal');
+            const modalInstance =
+                bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+            // Redirect based on user role
+            if (data.role === 'CUSTOMER') {
+                document.getElementById(
+                    'Customer-Dash'
+                ).classList.remove('d-none');
+            } else if (data.role === 'MECHANIC') {
+                window.location.href = 'empDash.html';
+            } else if (data.role === 'RECEPTIONIST') {
+                window.location.href = 'receptionistDash.html';
+            } else if (
+                data.role === 'ADMIN' ||
+                data.role === 'DEV_ADMIN'
+            ) {
+                window.location.href = 'adminDash.html';
+            }
+        } else {
+            showMessage(
+                'Account created successfully! Please sign in.',
+                'success'
+            );
+            // Clear signup fields
+            firstNameInput.value = '';
+            lastNameInput.value = '';
+            phoneNumberInput.value = '';
+            document.getElementById('password').value = '';
+            // Return to login mode
+            toggleModeBtn.click();
+        }
+    } else {
+        showMessage(
+            data.message || 'Authentication failed.',
+            'error'
+        );
+    }
+    } catch (error) {
+        console.error('Authentication error:', error);
+        showMessage(
+            'Cannot connect to server. Please try again.',
+            'error'
+        );
+    } finally {
+        submitBtn.disabled = false;
+        submitText.textContent =
+            isLoginMode ? 'Sign In' : 'Sign Up';
+    }
     });
 </script>
 </body>
