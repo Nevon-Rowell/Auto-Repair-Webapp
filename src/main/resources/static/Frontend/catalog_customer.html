@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<!-- NavBaar -->
+<!-- Nav-Baar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-black shadow">
     <div class="container"> <!-- Inner container keeps nav items centered -->
 
@@ -81,18 +81,51 @@
 <!--Cat_grid-->
 
 </div>
+    <!-- PRODUCT DETAILS MODAL (Pop-up) -->
+    <div id="productModal" class="modal">
+        <!-- Modal Content Box -->
+        <div class="modal-content">
+            <!-- Close Button (The 'X') -->
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+
+            <!-- Image Placeholder -->
+            <div class="modal-image-placeholder">
+                <i class="bi bi-gear"></i>
+            </div>
+
+            <!-- Product Details -->
+            <h2 id="modalTitle">Product Name</h2>
+            <p class="modal-category">Category: <span id="modalCategory">Category</span></p>
+
+            <h3 id="modalPrice">$0.00</h3>
+            <p id="modalDesc">Description goes here.</p>
+
+            <p class="modal-stock-status">Status: <span id="modalStock">In Stock</span></p>
+
+            <!-- Add to Cart Button -->
+            <button onclick="addToCart()" class="btn btn-success modal-cart-btn">
+                <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+        </div>
+    </div>
 <!-- script for filters an pop up details-->
 <script>
     const filterBtns = document.querySelectorAll('.filter-btn');
-    const partCards = document.querySelectorAll('.part-card');
 
     filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+            // Change the active green button color
             filterBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
+            //Get what we are filtering by (e.g., "Engine Part")
             const filterValue = btn.getAttribute('data-filter');
-            partCards.forEach(card => {
+
+            // Grab the loaded cards NOW
+            const currentCards = document.querySelectorAll('.part-card');
+
+            //  Show or hide them based on the category
+            currentCards.forEach(card => {
                 if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
                     card.style.display = 'block';
                 } else {
@@ -178,25 +211,23 @@
         partsToRender.forEach(part => {
 
 
-            const safeName = part.partName || 'Unknown Part';
+            const safeName = part.PartName || 'Unknown Part';
 
-            const stockLevel = part.stockQuantity || 0;
+            const stockLevel = part.StockQuantity || 0;
             const outOfStock = stockLevel <= 0;
 
             let safePrice = "0.00";
-            if (part.sellingPrice !== null && part.sellingPrice !== undefined) {
-                safePrice = Number(part.sellingPrice).toFixed(2);
+            if (part.SellingPrice !== null && part.SellingPrice !== undefined) {
+                safePrice = Number(part.SellingPrice).toFixed(2);
             }
 
-            // Category: matches Category / category
-            const partCategory = part.category || 'all';
+            const partCategory = part.Category || 'all';
 
             // Button and Badge UI
             const stockBadge = outOfStock ? `<span class="out-of-stock-badge">OUT OF STOCK</span>` : '';
             const buttonText = outOfStock ? 'Unavailable' : 'View Details';
             const buttonDisabled = outOfStock ? 'disabled style="background-color:#ccc; cursor:not-allowed;"' : '';
 
-            // Notice ID is now part.partID to match your Java model
             const cardHtml = `
                 <div class="part-card" data-category="${partCategory}">
                     ${stockBadge}
@@ -205,7 +236,7 @@
                     </div>
                     <h3 class="part-title">${safeName}</h3>
                     <p class="part-price">$${safePrice}</p>
-                    <button class="view-btn" onclick="console.log('Open modal for part ' + ${part.partID})" ${buttonDisabled}>
+                    <button class="view-btn" onclick="openPartModal(${part.PartID})" ${buttonDisabled}>
                         ${buttonText}
                     </button>
                 </div>
@@ -214,6 +245,49 @@
             catalogContainer.innerHTML += cardHtml;
         });
     }
+    // model pop for the view details button
+    function openPartModal(partID) {
+        // Find the exact part
+        const part = allParts.find(p => p.PartID === partID);
+        if (!part) return;
+
+        // Format the data
+        const title = part.PartName || 'Unknown Part';
+        const category = part.Category || 'General';
+        const price = '$' + Number(part.SellingPrice).toFixed(2);
+        const desc = `High-quality ${category} guaranteed to fit. Order now for quick delivery!`;
+
+        const stockLevel = part.StockQuantity || 0;
+        const stockStatus = stockLevel > 0 ? 'In Stock' : 'Out of Stock';
+
+        // Send it to the modal HTML
+        openModal(title, category, price, desc, stockStatus);
+    }
+    // 1. Physically pushes the data into the HTML and shows the box
+    function openModal(title, category, price, desc, stockStatus) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalCategory').innerText = category;
+        document.getElementById('modalPrice').innerText = price;
+        document.getElementById('modalDesc').innerText = desc;
+        document.getElementById('modalStock').innerText = stockStatus;
+
+        // Show the modal (changes display from 'none' to 'flex')
+        document.getElementById('productModal').style.display = 'flex';
+    }
+
+    // 2. Hides the box when you click the 'X'
+    function closeModal() {
+        document.getElementById('productModal').style.display = 'none';
+    }
+
+    // 3. (Bonus) Hides the box if you click anywhere outside of it
+    window.onclick = function(event) {
+        const modal = document.getElementById('productModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
 </script>
+</div>
 </body>
 </html>
