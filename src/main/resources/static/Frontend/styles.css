@@ -31,3 +31,72 @@ h1{
     font-size: 3.5rem;
     margin-bottom: 15px;
 }
+.navbar-brand img {
+    max-height: 50px; /* Prevents the logo from taking up too much vertical space */
+    width: auto;
+    border-radius: 4px;
+}
+
+.carousel-item video,
+.carousel-item img {
+    height: 600px;
+    width: 100%;
+    object-fit: cover; /* Ensures videos/images fill the space without stretching */
+}
+
+/* Styling for the new action blocks */
+.action-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 15px;
+}
+
+.action-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important;
+}
+
+.action-icon {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+}
+/* Blurs the background when the modal opens */
+.modal-backdrop.show {
+    opacity: 1 !important;
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Dark theme styling for the modal to match AUTOFLIX design */
+.autoflix-modal {
+    background-color: #121212;
+    border: 1px solid #333;
+    border-radius: 1.5rem;
+    color: #ffffff;
+}
+
+.autoflix-input {
+    background-color: #1e1e1e;
+    border: 1px solid #444;
+    color: white;
+}
+
+.autoflix-input:focus {
+    background-color: #2a2a2a;
+    border-color: #198754; /* Green focus ring */
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    color: white;
+}
+
+.autoflix-btn {
+    background-color: #00e676; /* Neon green matching the logo */
+    color: #000;
+    font-weight: 600;
+    border: none;
+}
+
+.autoflix-btn:hover {
+    background-color: #00c853;
+    color: #000;
+}

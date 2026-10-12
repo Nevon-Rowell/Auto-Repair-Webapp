@@ -1,0 +1,57 @@
+.body {
+    background-color: #fcfcfc;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Neon Green Brand Colors */
+.text-autoflix-green { color: #00e676 !important; }
+.bg-autoflix-black { background-color: #000000 !important; }
+
+/* Pill Buttons */
+.btn-autoflix {
+    background-color: #00e676;
+    color: #000000;
+    border-radius: 50px;
+    font-weight: 600;
+    border: none;
+    padding: 10px 24px;
+    transition: all 0.2s ease-in-out;
+}
+.btn-autoflix:hover {
+    background-color: #00c853;
+    color: #000000;
+    transform: scale(1.02);
+}
+
+/* Card & Header Styling mimicking the black/green table header */
+.admin-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+    background-color: #ffffff;
+}
+.admin-card-header {
+    background-color: #000000;
+    color: #00e676;
+    font-weight: bold;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    border-bottom: none;
+}
+
+/* Clean Inputs */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 10px 15px;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #00e676;
+    box-shadow: 0 0 0 0.25rem rgba(0, 230, 118, 0.25);
+}
+
+.navbar-brand img {
+    max-height: 40px;
+    width: auto;
+}

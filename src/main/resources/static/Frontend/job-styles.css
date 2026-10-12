@@ -1,0 +1,105 @@
+:root {
+    --af-green: #00e65b; /* Vibrant green from the logo */
+    --af-green-hover: #00c44e;
+    --af-black: #0a0a0a;
+    --af-dark-grey: #1a1a1a;
+    --af-white: #ffffff;
+}
+
+body {
+    background-color: var(--af-white);
+    color: var(--af-black);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: #000000 !important;
+    border-bottom: 2px solid var(--af-green);
+}
+.navbar-brand {
+    color: var(--af-green) !important;
+    font-weight: 800;
+    letter-spacing: 2px;
+    font-size: 1.5rem;
+}
+.nav-link {
+    color: var(--af-white) !important;
+}
+.nav-link:hover {
+    color: var(--af-green) !important;
+}
+
+/* Custom Green Buttons */
+.btn-green {
+    background-color: var(--af-green);
+    color: var(--af-black);
+    font-weight: 600;
+    border: none;
+}
+.btn-green:hover {
+    background-color: var(--af-green-hover);
+    color: var(--af-black);
+}
+
+.btn-outline-green {
+    background-color: transparent;
+    color: var(--af-green);
+    border: 1px solid var(--af-green);
+}
+.btn-outline-green:hover {
+    background-color: var(--af-green);
+    color: var(--af-black);
+}
+
+/* Card & Modal Styling */
+.card, .modal-content {
+    background-color: var(--af-dark-grey);
+    border: 1px solid #333;
+    color: var(--af-black);
+}
+.modal-header {
+    border-bottom: 1px solid #333;
+}
+.modal-footer {
+    border-top: 1px solid #333;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    background-color: white;
+    border: 1px solid #333;
+    color: var(--af-white);
+}
+.form-control:focus, .form-select:focus {
+    background-color: #000;
+    color: var(--af-white);
+    border-color: var(--af-green);
+    box-shadow: 0 0 0 0.25rem rgba(0, 230, 91, 0.25);
+}
+::placeholder {
+    color: #666 !important;
+}
+
+/* Table Styling */
+.table {
+    color: var(--af-white);
+    border-color: #333;
+}
+.table-dark th {
+    background-color: #000;
+    color: var(--af-green);
+    border-bottom: 2px solid var(--af-green);
+}
+.table tbody tr:hover {
+    background-color: #222;
+}
+.table td {
+    vertical-align: middle;
+    background-color: var(--af-dark-grey);
+}
+.navbar-brand img {
+    max-height: 50px;
+    width: auto;
+    border-radius: 4px;
+}

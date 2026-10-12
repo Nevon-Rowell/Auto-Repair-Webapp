@@ -1,0 +1,29 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+/* Smooth transitions for UI states */
+.fade-enter {
+    opacity: 0;
+    transform: translateY(10px);
+}
+.fade-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms, transform 300ms;
+}
+/* Custom spinner animation */
+.loader {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-left-color: #ffffff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
