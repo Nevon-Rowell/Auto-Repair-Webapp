@@ -1,5 +1,6 @@
 package AutoReparShop.webapp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -28,6 +29,7 @@ public class SparePart {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplierID", nullable = false)
+    @JsonIgnore
     private Supplier supplier;
 
     public SparePart() {}

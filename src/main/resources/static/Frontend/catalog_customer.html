@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Put this inside your <head> tags -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoFlix - Spare Parts Catalog</title>
@@ -10,20 +13,55 @@
 <body>
 
 <!-- NavBaar -->
-<nav class="navbar">
-    <div class="logo">
-        <img class="navlogo" src="FB_IMG_1787760750663_cropped.jpg" alt="AutoFlix Logo">
-    </div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-black shadow">
+    <div class="container"> <!-- Inner container keeps nav items centered -->
 
-    <ul class="nav-menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="#" class="active">Spare Parts</a></li>
-        <li><a href="#">Place a Job</a></li>
-    </ul>
+        <a class="navbar-brand" href="#">
+            <img src="FB_IMG_1787760750663_cropped.jpg" alt="Logo" style="height: 50px; width: auto; border-radius: 5px;">
+        </a>
 
-    <div class="cart-container">
-        <i class="fas fa-shopping-cart cart-icon"></i>
-        <span class="cart-badge">0</span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Services</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">About Us</a></li>
+                        <li><a class="dropdown-item" href="#">Contact</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <form class="d-flex mx-auto w-50">
+                <input class="form-control me-2 rounded-pill" type="search" placeholder="Search..." aria-label="Search"/>
+                <button class="btn btn-outline-light rounded-pill px-4" type="submit">Search</button>
+            </form>
+
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                <!-- CART ICON -->
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-white cart-container" href="#">
+                        <i class="bi bi-cart3 cart-icon"></i>
+                        <span class="cart-badge">2</span>
+                    </a>
+                </li>
+                <!-- PROFILE ICON -->
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-white fs-4" href="#" data-bs-toggle="modal" data-bs-target="#loginModal" title="User Profile / Login">
+                        <i class="bi bi-person-circle"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>
 
@@ -39,59 +77,9 @@
         <button class="filter-btn" data-filter="Interior Part">Interior</button>
         <button class="filter-btn" data-filter="Electrical Part">Electrical</button>
     </div>
-<div class = "catalog-container">
+<div class = "catalog-container" id="parts-catalog">
 <!--Cat_grid-->
-    <div class="part-card" data-category="Engine Part">
-    <div class="card-image-placeholder"><i class="fas fa-cogs"></i></div>
-    <h3 class="part-title">V8 Spark Plugs (Set of 8)</h3>
-    <p class="part-price">$45.00</p>
-    <button class="view-btn" onclick="openModal('V8 Spark Plugs (Set of 8)', 'Engine Part', '$45.00', 'High-performance iridium spark plugs designed for maximum combustion efficiency. Fits most modern V8 engines.', 'In Stock')">View Details</button>
-</div>
 
-    <div class="part-card" data-category="Brake Part">
-    <div class="card-image-placeholder"><i class="fas fa-circle-notch"></i></div>
-    <h3 class="part-title">Ceramic Brake Pads</h3>
-    <p class="part-price">$65.99</p>
-    <button class="view-btn" onclick="openModal('Ceramic Brake Pads', 'Brake Part', '$65.99', 'Low-dust ceramic brake pads for quiet stopping power and long life. Includes hardware kit.', 'In Stock')">View Details</button>
-</div>
-    <div class="part-card" data-category="Electrical Part">
-    <span class="out-of-stock-badge">Out of Stock</span>
-    <div class="card-image-placeholder"><i class="fas fa-car-battery"></i></div>
-    <h3 class="part-title">12V Car Battery</h3>
-    <p class="part-price">$120.00</p>
-    <button class="view-btn" onclick="openModal('12V Car Battery', 'Electrical Part', '$120.00', 'Reliable 12V starting battery with 650 Cold Cranking Amps (CCA) for extreme weather.', 'Out of Stock')">View Details</button>
-</div>
-    <div class="part-card" data-category="Interior Part">
-    <div class="card-image-placeholder"><i class="fas fa-chair"></i></div>
-    <h3 class="part-title">Leather Seat Covers</h3>
-    <p class="part-price">$199.50</p>
-    <button class="view-btn" onclick="openModal('Leather Seat Covers', 'Interior Part', '$199.50', 'Premium synthetic leather seat covers. Waterproof, easy to install, and durable.', 'In Stock')">View Details</button>
-</div>
-    <div class="part-card" data-category="Chassis Part">
-    <div class="card-image-placeholder"><i class="fas fa-compress-arrows-alt"></i></div>
-    <h3 class="part-title">Front Suspension Strut</h3>
-    <p class="part-price">$85.00</p>
-    <button class="view-btn" onclick="openModal('Front Suspension Strut', 'Chassis Part', '$85.00', 'OEM replacement front strut assembly to restore original ride height and control.', 'In Stock')">View Details</button>
-</div>
-<!--Pop up section On view details button-->
-    <div id="productModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <div class="modal-header">
-            <h2 id="modalTitle">Part Name</h2>
-            <span id="modalCategory" class="badge">Category</span>
-        </div>
-        <p id="modalDesc" class="modal-desc">Part description goes here.</p>
-
-        <div class="modal-footer">
-            <div>
-                <h3 id="modalPrice" class="modal-price">$0.00</h3>
-                <p id="modalStock" class="stock-status">In Stock</p>
-            </div>
-            <button class="add-cart-btn" onclick="addToCart()">Add to Cart <i class="fas fa-cart-plus"></i></button>
-        </div>
-    </div>
-</div>
 </div>
 <!-- script for filters an pop up details-->
 <script>
@@ -148,6 +136,83 @@
         cartCount++;
         document.querySelector('.cart-badge').innerText = cartCount;
         closeModal();
+    }
+        let allParts = []; // Stores the catalog locally for future filtering/search
+
+        document.addEventListener("DOMContentLoaded", () => {
+        loadPartsCatalog();
+    });
+
+        async function loadPartsCatalog() {
+        try {
+        // EDIT THIS URL to match your backend endpoint for parts
+        const response = await fetch('http://localhost:8080/api/parts');
+
+        if (!response.ok) throw new Error("Failed to fetch data");
+
+        allParts = await response.json();
+        renderCatalog(allParts);
+
+    } catch (error) {
+        console.error("Error loading catalog:", error);
+        document.getElementById('parts-catalog').innerHTML =
+        '<p style="grid-column: 1/-1; text-align: center;">Could not load parts from the database.</p>';
+    }
+    }
+
+    function renderCatalog(partsToRender) {
+        const catalogContainer = document.getElementById('parts-catalog');
+        catalogContainer.innerHTML = '';
+
+        // Check if database is empty
+        if (!partsToRender || partsToRender.length === 0) {
+            catalogContainer.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <h4>No parts available</h4>
+                    <p class="text-muted">There are currently no spare parts in the database inventory.</p>
+                </div>`;
+            return;
+        }
+
+        // Generate Cards using exact Java model names
+        partsToRender.forEach(part => {
+
+
+            const safeName = part.partName || 'Unknown Part';
+
+            const stockLevel = part.stockQuantity || 0;
+            const outOfStock = stockLevel <= 0;
+
+            let safePrice = "0.00";
+            if (part.sellingPrice !== null && part.sellingPrice !== undefined) {
+                safePrice = Number(part.sellingPrice).toFixed(2);
+            }
+
+            // Category: matches Category / category
+            const partCategory = part.category || 'all';
+
+            // Button and Badge UI
+            const stockBadge = outOfStock ? `<span class="out-of-stock-badge">OUT OF STOCK</span>` : '';
+            const buttonText = outOfStock ? 'Unavailable' : 'View Details';
+            const buttonDisabled = outOfStock ? 'disabled style="background-color:#ccc; cursor:not-allowed;"' : '';
+
+            // Notice ID is now part.partID to match your Java model
+            const cardHtml = `
+                <div class="part-card" data-category="${partCategory}">
+                    ${stockBadge}
+                    <div class="card-image-placeholder">
+                        <i class="bi bi-gear"></i>
+                    </div>
+                    <h3 class="part-title">${safeName}</h3>
+                    <p class="part-price">$${safePrice}</p>
+                    <button class="view-btn" onclick="console.log('Open modal for part ' + ${part.partID})" ${buttonDisabled}>
+                        ${buttonText}
+                    </button>
+                </div>
+            `;
+
+            catalogContainer.innerHTML += cardHtml;
+        });
     }
 </script>
 </body>
