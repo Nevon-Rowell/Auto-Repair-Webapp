@@ -59,31 +59,30 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(java.util.Map.of("status", "error", "message", "Invalid email or password"));
     }
+
     @PostMapping("/signup")
-    public ResponseEntity<?> registerCustomer(@RequestBody LoginRequest signupRequest) {
+    public ResponseEntity<?> registerCustomer(@RequestBody Map<String, String> payload) {
 
         // 1. Check if a user with this email already exists
-        if (customerRepository.findByEmail(signupRequest.getEmail()).isPresent()) {
+        if (customerRepository.findByEmail(payload.get("email")).isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("status", "error", "message", "Email is already in use"));
         }
 
-        // 2. Create a new Customer entity
+        // 2. Map the JSON payload to the Customer entity[cite: 5]
         Customer newCustomer = new Customer();
-        newCustomer.setEmail(signupRequest.getEmail());
+        newCustomer.setFirstName(payload.get("firstName"));
+        newCustomer.setLastName(payload.get("lastName"));
+        newCustomer.setPhoneNumber(payload.get("phoneNumber"));
+        newCustomer.setEmail(payload.get("email"));
 
-        // 3. Hash the password before saving it to the database!
-        // Never store plain-text passwords.
-        String hashedPassword = passwordEncoder.encode(signupRequest.getPassword());
+        // 3. Hash the password before saving
+        String hashedPassword = passwordEncoder.encode(payload.get("password"));
         newCustomer.setPasswordHash(hashedPassword);
 
-        // Optional: Set default values for other fields if needed
-        // newCustomer.setFirstName("New User");
-
-        // 4. Save the customer to the SQL database
+        // 4. Save to the database
         customerRepository.save(newCustomer);
 
-        // 5. Return success message
         return ResponseEntity.ok(Map.of(
                 "status", "success",
                 "message", "Account created successfully"

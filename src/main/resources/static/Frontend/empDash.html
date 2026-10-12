@@ -110,6 +110,22 @@
                         <input type="text" class="form-control rounded-3" id="plate-input" placeholder="e.g. ABC-1234" required>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-secondary small text-uppercase fw-bold">Brand Name</label>
+                            <input type="text" class="form-control rounded-3" id="brand-input" placeholder="e.g. Toyota" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-secondary small text-uppercase fw-bold">Model</label>
+                            <input type="text" class="form-control rounded-3" id="model-input" placeholder="e.g. Camry" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Mileage</label>
+                        <input type="number" class="form-control rounded-3" id="mileage-input" placeholder="e.g. 45000" required>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label text-secondary small text-uppercase fw-bold">Predetermined Service</label>
                         <select class="form-select rounded-3" id="service-dropdown" required>
@@ -138,6 +154,7 @@
     </div>
 </div>
 
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -148,6 +165,9 @@
     // 1. Create a New Job
     function CreateNewJob() {
         let plate = document.getElementById('plate-input').value;
+        let brand = document.getElementById('brand-input').value;
+        let model = document.getElementById('model-input').value;
+        let mileage = document.getElementById('mileage-input').value;
         let selectedService = document.getElementById('service-dropdown').value;
         let additionalNotes = document.getElementById('notes-input').value;
 
@@ -156,8 +176,8 @@
             return;
         }
 
-        // Combine the dropdown selection and notes into the single jobNotes field your backend expects
-        let combinedNotes = `[${selectedService}]`;
+        // Combine vehicle details, service, and notes into the single jobNotes field
+        let combinedNotes = `[${selectedService}] | Vehicle: ${brand} ${model} | Mileage: ${mileage}`;
         if (additionalNotes.trim() !== "") {
             combinedNotes += ` - ${additionalNotes}`;
         }
@@ -176,20 +196,16 @@
             .then(() => window.location.reload())
             .catch(error => console.error('Error creating job:', error));
     }
-
     // 2. Update Job Status
-    function UpdateJobStatus(id) {
-        let newStatus = prompt("Enter new status (e.g., Pending, In Progress, Completed): ");
-        if(newStatus) {
-            let jobData = {jobStatus: newStatus};
-            fetch(`${API_URL}/${id}`, {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(jobData)
-            })
-                .then(() => window.location.reload())
-                .catch(error => console.error('Error updating status:', error));
-        }
+    function UpdateJobStatus(id, newStatus) {
+        let jobData = {jobStatus: newStatus};
+        fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(jobData)
+        })
+            .then(() => window.location.reload())
+            .catch(error => console.error('Error updating status:', error));
     }
 
     // 3. Delete Job
@@ -219,21 +235,28 @@
                 if (statusLower.includes("complete")) badgeClass = "bg-success text-white";
 
                 let row = `
-                 <tr>
-                    <td class="ps-4 fw-bold" style="color: var(--af-green);">#${Job.jobID}</td>
-                    <td><span class="badge border border-light text-light p-2">${Job.licensePlateNO}</span></td>
-                    <td><span class="badge ${badgeClass} p-2">${Job.jobStatus}</span></td>
-                    <td class="text-light opacity-75">${Job.jobNotes}</td>
-                    <td class="text-end pe-4">
-                        <button class="btn btn-sm btn-outline-green rounded-pill me-2" onclick="UpdateJobStatus(${Job.jobID})" title="Update Status">
-                            <i class="bi bi-arrow-repeat"></i> Status
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="DeleteJob(${Job.jobID})" title="Delete Job">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                 </tr>
-                `;
+                     <tr>
+                        <td class="ps-4 fw-bold" style="color: var(--af-green);">#${Job.jobID}</td>
+                        <td><span class="badge border border-light text-light p-2">${Job.licensePlateNO}</span></td>
+                        <td><span class="badge ${badgeClass} p-2">${Job.jobStatus}</span></td>
+                        <td class="text-light opacity-75">${Job.jobNotes}</td>
+                        <td class="text-end pe-4">
+                            <div class="dropdown d-inline">
+                                <button class="btn btn-sm btn-outline-green rounded-pill dropdown-toggle me-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-arrow-repeat"></i> Status
+                                </button>
+                                <ul class="dropdown-menu shadow">
+                                    <li><a class="dropdown-item" href="#" onclick="UpdateJobStatus(${Job.jobID}, 'Pending')">Pending</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="UpdateJobStatus(${Job.jobID}, 'In Progress')">In Progress</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="UpdateJobStatus(${Job.jobID}, 'Completed')">Completed</a></li>
+                                </ul>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="DeleteJob(${Job.jobID})" title="Delete Job">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                     </tr>
+                          `;
                 tableBody.innerHTML += row;
             });
         })
