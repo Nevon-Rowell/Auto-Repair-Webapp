@@ -33,12 +33,17 @@
             </form>
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                <!-- UPDATED CART ICON -->
-                <li class="nav-item ms-3">
+                <!-- CART ICON (Wrapped in a div to hide when Manager is logged in) -->
+                <li class="nav-item ms-3" id="navCartContainer">
                     <a class="nav-link text-white cart-container" href="javascript:void(0)" onclick="openCartModal()">
                         <i class="bi bi-cart3 cart-icon"></i>
                         <span class="cart-badge" id="cartBadge">0</span>
                     </a>
+                </li>
+
+                <!-- PROFILE ICON -->
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-white fs-4" href="#"><i class="bi bi-person-circle"></i></a>
                 </li>
             </ul>
         </div>
@@ -65,14 +70,29 @@
     <div class="modal-content">
         <span class="modal-close" onclick="closeModal()">&times;</span>
         <div class="modal-image-placeholder"><i class="bi bi-gear"></i></div>
+
         <h2 id="modalTitle">Product Name</h2>
         <p class="modal-category">Category: <span id="modalCategory">Category</span></p>
         <h3 id="modalPrice">$0.00</h3>
         <p id="modalDesc">Description goes here.</p>
         <p class="modal-stock-status">Status: <span id="modalStock">In Stock</span></p>
-        <button onclick="addToCart()" class="btn btn-success modal-cart-btn">
-            <i class="bi bi-cart-plus"></i> Add to Cart
-        </button>
+
+        <!-- CUSTOMER CONTROLS -->
+        <div id="customerControls">
+            <button onclick="addToCart()" class="btn btn-success modal-cart-btn">
+                <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+        </div>
+
+        <!-- MANAGER CONTROLS (Hidden by default) -->
+        <div id="managerControls" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+            <label class="fw-bold mb-2"><i class="bi bi-box-seam"></i> Update Stock Balance:</label>
+            <div class="d-flex gap-2">
+                <input type="number" id="editStockInput" class="form-control" min="0">
+                <button onclick="saveStockUpdate()" class="btn btn-primary w-50">Save Stock</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -100,6 +120,7 @@
 
 <!-- JAVASCRIPT -->
 <script>
+    let currentUserRole =sessionStorage.getItem('userRole') || 'CUSTOMER';
     let allParts = [];
     let cart = [];
     let activeCategory = 'all';
@@ -109,6 +130,14 @@
     const cartModal = document.getElementById('cartModal');
 
     document.addEventListener("DOMContentLoaded", () => {
+        const savedRole = sessionStorage.getItem('userRole') || 'CUSTOMER';
+        currentUserRole = savedRole.toUpperCase();
+
+        if (currentUserRole === 'RECEPTIONIST' || currentUserRole === 'ADMIN') {
+            document.getElementById('navCartContainer').style.display = 'none';
+        } else {
+            document.getElementById('navCartContainer').style.display = 'block';
+        }
         loadPartsCatalog();
     });
 
@@ -142,14 +171,23 @@
             const safeName = part.PartName || 'Unknown Part';
             const stockLevel = part.StockQuantity || 0;
             const outOfStock = stockLevel <= 0;
+
             let safePrice = "0.00";
             if (part.SellingPrice !== null && part.SellingPrice !== undefined) {
                 safePrice = Number(part.SellingPrice).toFixed(2);
             }
+
             const partCategory = part.Category || 'all';
             const stockBadge = outOfStock ? `<span class="out-of-stock-badge">OUT OF STOCK</span>` : '';
-            const buttonText = outOfStock ? 'Unavailable' : 'View Details';
-            const buttonDisabled = outOfStock ? 'disabled style="background-color:#ccc; cursor:not-allowed;"' : '';
+
+            let buttonText = outOfStock ? 'Unavailable' : 'View Details';
+            let buttonDisabled = outOfStock ? 'disabled style="background-color:#ccc; cursor:not-allowed;"' : '';
+            const safeRole = (currentUserRole || 'CUSTOMER').toUpperCase();
+
+            if (safeRole === 'RECEPTIONIST' || safeRole === 'ADMIN') {
+                buttonDisabled = '';
+                buttonText = outOfStock ? 'Restock Item' : 'Manage Part';
+            }
 
             catalogContainer.innerHTML += `
                 <div class="part-card" data-category="${partCategory}">
@@ -208,6 +246,18 @@
         const stockElement = document.getElementById('modalStock');
         stockElement.innerText = stockStatus;
         stockElement.style.color = (stockStatus === 'In Stock') ? '#2ecc71' : '#e74c3c';
+
+        const safeRole = (currentUserRole || 'CUSTOMER').toUpperCase();
+
+        if (safeRole === 'RECEPTIONIST' || safeRole === 'ADMIN') {
+            document.getElementById('customerControls').style.display = 'none';
+            document.getElementById('managerControls').style.display = 'block';
+            const partData = allParts.find(p => p.PartID === currentModalPartID);
+            document.getElementById('editStockInput').value = partData ? partData.StockQuantity : 0;
+        } else {
+            document.getElementById('customerControls').style.display = 'block';
+            document.getElementById('managerControls').style.display = 'none';
+        }
 
         productModal.style.display = 'flex';
     }
@@ -326,7 +376,47 @@
         if (event.target === productModal) closeModal();
         if (event.target === cartModal) closeCartModal();
     };
-</script>
 
+    function switchRole(newRole) {
+        currentUserRole = newRole;
+        const safeRole = (currentUserRole || 'CUSTOMER').toUpperCase();
+        if (safeRole === 'RECEPTIONIST' || safeRole === 'ADMIN') {
+            document.getElementById('navCartContainer').style.display = 'none';
+        } else {
+            document.getElementById('navCartContainer').style.display = 'block';
+        }
+        closeModal();
+        filterAndSearchCatalog();
+    }
+
+    async function saveStockUpdate() {
+        const newStock = parseInt(document.getElementById('editStockInput').value, 10);
+
+        if (!currentModalPartID) return;
+        if (isNaN(newStock) || newStock < 0) {
+            alert("Please enter a valid, non-negative stock quantity.");
+            return;
+        }
+
+        try {
+            const updatedPart = { stockQuantity: newStock };
+
+            const response = await fetch(`http://localhost:8080/api/parts/${currentModalPartID}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedPart)
+            });
+
+            if (!response.ok) throw new Error("Failed to update stock on the server.");
+
+            alert("Stock updated successfully!");
+            loadPartsCatalog();
+            closeModal();
+        } catch (error) {
+            console.error("Error updating stock:", error);
+            alert("Could not update stock. Check your Java console.");
+        }
+    }
+</script>
 </body>
 </html>

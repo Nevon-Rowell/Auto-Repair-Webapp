@@ -1,6 +1,5 @@
 package AutoReparShop.webapp.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -27,22 +26,16 @@ public class SparePart {
     @Column(name = "stockQuantity")
     private int StockQuantity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supplierID", nullable = false)
-    @JsonIgnore
-    private Supplier supplier;
-
     public SparePart() {}
 
     public SparePart(int partID, String partName, String category,
-                     double costPrice, double sellingPrice, int stockQty, Supplier supplier) {
+                     double costPrice, double sellingPrice, int stockQty) {
         this.PartID = partID;
         this.PartName = partName;
         this.Category = category;
         this.CostPrice = costPrice;
         this.SellingPrice = sellingPrice;
         this.StockQuantity = stockQty;
-        this.supplier = supplier;
     }
 
     public int getPartID() { return PartID; }
@@ -62,7 +55,4 @@ public class SparePart {
 
     public int getStockQuantity() { return StockQuantity; }
     public void setStockQuantity(int stockQty) { this.StockQuantity = stockQty; }
-
-    public Supplier getSupplier() { return supplier; }
-    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
 }
