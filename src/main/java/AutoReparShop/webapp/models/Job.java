@@ -10,7 +10,9 @@ public class Job{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int jobID;
+    @Column (name = "job_status")
     private String jobStatus;
+    @Column (name = "job_notes")
     private String jobNotes;
     @Column (name = "license_plateno")
     private String licensePlateNO;

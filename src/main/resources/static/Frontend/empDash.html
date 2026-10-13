@@ -130,13 +130,23 @@
                         <label class="form-label text-secondary small text-uppercase fw-bold">Predetermined Service</label>
                         <select class="form-select rounded-3" id="service-dropdown" required>
                             <option value="" selected disabled>Select a primary service...</option>
-                            <option value="Standard Oil Change">Standard Oil Change</option>
-                            <option value="Brake Pad Replacement">Brake Pad Replacement</option>
-                            <option value="Engine Diagnostics">Engine Diagnostics</option>
-                            <option value="Tire Rotation & Alignment">Tire Rotation & Alignment</option>
-                            <option value="Full Vehicle Restoration">Full Vehicle Restoration</option>
-                            <option value="Battery Replacement">Battery Replacement</option>
-                            <option value="Custom Repair">Other / Custom Repair</option>
+                            <script>
+                            // Fetch and populate the Service Type dropdown on load
+                                fetch('http://localhost:8080/api/services')
+                                    .then(response => response.json())
+                                    .then(data => {
+                                    const dropdown = document.getElementById('service-dropdown');
+                                    data.forEach(service => {
+                                    let option = document.createElement('option');
+                                // We use the serviceName as the value so your existing CreateNewJob logic keeps working
+                                    option.value = service.serviceName;
+                                // Displays the name and the base price to the employee
+                                    option.textContent = `${service.serviceName} ($${service.basePrice.toFixed(2)})`;
+                                    dropdown.appendChild(option);
+                                    });
+                                })
+                            .catch(error => console.error('Error fetching service types:', error));
+                            </script>
                         </select>
                     </div>
 
