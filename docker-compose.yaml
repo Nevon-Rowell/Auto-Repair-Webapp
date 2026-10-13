@@ -10,5 +10,5 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://100.109.209.35:3306/Auto_repair_shop?useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: admin
-      SPRING_DATASOURCE_PASSWORD: YOUR_TAILSCALE_DB_PASSWORD
+      SPRING_DATASOURCE_PASSWORD: your_password
       SPRING_JPA_HIBERNATE_DDL_AUTO: none
