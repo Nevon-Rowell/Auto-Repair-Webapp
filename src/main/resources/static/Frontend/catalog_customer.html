@@ -14,7 +14,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-black shadow">
     <div class="container">
         <a class="navbar-brand" href="#">
-            <!-- Add your logo src back here -->
             <img src="FB_IMG_1787760750663_cropped.jpg" alt="Logo" style="height: 50px; width: auto; border-radius: 5px;">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
@@ -26,22 +25,18 @@
                 <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
             </ul>
 
-            <!-- UPDATED SEARCH BAR -->
             <form class="d-flex mx-auto w-50" onsubmit="event.preventDefault(); filterAndSearchCatalog();">
                 <input class="form-control me-2 rounded-pill" type="search" id="searchInput" placeholder="Search parts..." oninput="filterAndSearchCatalog()"/>
                 <button class="btn btn-outline-light rounded-pill px-4" type="submit">Search</button>
             </form>
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                <!-- CART ICON (Wrapped in a div to hide when Manager is logged in) -->
                 <li class="nav-item ms-3" id="navCartContainer">
                     <a class="nav-link text-white cart-container" href="javascript:void(0)" onclick="openCartModal()">
                         <i class="bi bi-cart3 cart-icon"></i>
                         <span class="cart-badge" id="cartBadge">0</span>
                     </a>
                 </li>
-
-                <!-- PROFILE ICON -->
                 <li class="nav-item ms-3">
                     <a class="nav-link text-white fs-4" href="#"><i class="bi bi-person-circle"></i></a>
                 </li>
@@ -84,7 +79,7 @@
             </button>
         </div>
 
-        <!-- MANAGER CONTROLS (Hidden by default) -->
+        <!-- MANAGER CONTROLS -->
         <div id="managerControls" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
             <label class="fw-bold mb-2"><i class="bi bi-box-seam"></i> Update Stock Balance:</label>
             <div class="d-flex gap-2">
@@ -92,11 +87,10 @@
                 <button onclick="saveStockUpdate()" class="btn btn-primary w-50">Save Stock</button>
             </div>
         </div>
-
     </div>
 </div>
 
-<!-- SHOPPING CART MODAL (This was likely missing earlier!) -->
+<!-- SHOPPING CART MODAL -->
 <div id="cartModal" class="modal">
     <div class="modal-content cart-modal-content">
         <span class="modal-close" onclick="closeCartModal()">&times;</span>
@@ -120,7 +114,7 @@
 
 <!-- JAVASCRIPT -->
 <script>
-    let currentUserRole =sessionStorage.getItem('userRole') || 'CUSTOMER';
+    let currentUserRole = sessionStorage.getItem('userRole') || 'CUSTOMER';
     let allParts = [];
     let cart = [];
     let activeCategory = 'all';
@@ -168,16 +162,20 @@
         }
 
         partsToRender.forEach(part => {
-            const safeName = part.PartName || 'Unknown Part';
-            const stockLevel = part.StockQuantity || 0;
+            const partId = part.partID ?? part.partId ?? part.PartID;
+            const safeName = part.partName || part.PartName || 'Unknown Part';
+
+            // Comprehensive fallback for stock property name
+            const stockLevel = part.stockQuantity ?? part.StockQuantity ?? part.stock_quantity ?? part.quantity ?? part.stock ?? 0;
             const outOfStock = stockLevel <= 0;
 
             let safePrice = "0.00";
-            if (part.SellingPrice !== null && part.SellingPrice !== undefined) {
-                safePrice = Number(part.SellingPrice).toFixed(2);
+            const priceVal = part.sellingPrice ?? part.SellingPrice ?? part.price;
+            if (priceVal !== null && priceVal !== undefined) {
+                safePrice = Number(priceVal).toFixed(2);
             }
 
-            const partCategory = part.Category || 'all';
+            const partCategory = part.category || part.Category || 'all';
             const stockBadge = outOfStock ? `<span class="out-of-stock-badge">OUT OF STOCK</span>` : '';
 
             let buttonText = outOfStock ? 'Unavailable' : 'View Details';
@@ -195,7 +193,7 @@
                     <div class="card-image-placeholder"><i class="bi bi-gear"></i></div>
                     <h3 class="part-title">${safeName}</h3>
                     <p class="part-price">$${safePrice}</p>
-                    <button class="view-btn" onclick="openPartModal(${part.PartID})" ${buttonDisabled}>
+                    <button class="view-btn" onclick="openPartModal(${partId})" ${buttonDisabled}>
                         ${buttonText}
                     </button>
                 </div>
@@ -216,8 +214,8 @@
     function filterAndSearchCatalog() {
         const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
         const filteredParts = allParts.filter(part => {
-            const partName = (part.PartName || '').toLowerCase();
-            const partCategory = (part.Category || '');
+            const partName = (part.partName || part.PartName || '').toLowerCase();
+            const partCategory = (part.category || part.Category || '');
             const matchesCategory = (activeCategory === 'all') || (partCategory === activeCategory);
             const matchesSearch = partName.includes(searchQuery) || partCategory.toLowerCase().includes(searchQuery);
             return matchesCategory && matchesSearch;
@@ -226,15 +224,16 @@
     }
 
     function openPartModal(partID) {
-        const part = allParts.find(p => p.PartID === partID);
+        const part = allParts.find(p => (p.partID ?? p.partId ?? p.PartID) === partID);
         if (!part) return;
 
-        currentModalPartID = part.PartID;
+        currentModalPartID = part.partID ?? part.partId ?? p.PartID;
 
-        const title = part.PartName || 'Unknown Part';
-        const category = part.Category || 'General';
-        const price = '$' + Number(part.SellingPrice).toFixed(2);
-        const stockLevel = part.StockQuantity || 0;
+        const title = part.partName || part.PartName || 'Unknown Part';
+        const category = part.category || part.Category || 'General';
+        const priceVal = part.sellingPrice ?? part.SellingPrice ?? part.price ?? 0;
+        const price = '$' + Number(priceVal).toFixed(2);
+        const stockLevel = part.stockQuantity ?? part.StockQuantity ?? part.stock_quantity ?? part.quantity ?? part.stock ?? 0;
         const desc = `High-quality ${category} guaranteed to fit (${stockLevel} available in stock).`;
         const stockStatus = stockLevel > 0 ? 'In Stock' : 'Out of Stock';
 
@@ -252,8 +251,7 @@
         if (safeRole === 'RECEPTIONIST' || safeRole === 'ADMIN') {
             document.getElementById('customerControls').style.display = 'none';
             document.getElementById('managerControls').style.display = 'block';
-            const partData = allParts.find(p => p.PartID === currentModalPartID);
-            document.getElementById('editStockInput').value = partData ? partData.StockQuantity : 0;
+            document.getElementById('editStockInput').value = stockLevel;
         } else {
             document.getElementById('customerControls').style.display = 'block';
             document.getElementById('managerControls').style.display = 'none';
@@ -268,26 +266,32 @@
 
     function addToCart() {
         if (!currentModalPartID) return;
-        const part = allParts.find(p => p.PartID === currentModalPartID);
-        if (!part || (part.StockQuantity || 0) <= 0) {
+        const part = allParts.find(p => (p.partID ?? p.partId ?? p.PartID) === currentModalPartID);
+        const stockLevel = part ? (part.stockQuantity ?? part.StockQuantity ?? part.stock_quantity ?? part.quantity ?? part.stock ?? 0) : 0;
+
+        if (!part || stockLevel <= 0) {
             alert("Sorry, this item is currently out of stock!");
             return;
         }
 
-        const existingItem = cart.find(item => item.partID === part.PartID);
+        const partId = part.partID ?? part.partId ?? part.PartID;
+        const partName = part.partName || part.PartName || 'Unknown Part';
+        const priceVal = Number(part.sellingPrice ?? part.SellingPrice ?? part.price ?? 0);
+
+        const existingItem = cart.find(item => item.partID === partId);
         if (existingItem) {
-            if (existingItem.quantity + 1 > part.StockQuantity) {
-                alert(`Only ${part.StockQuantity} units available!`);
+            if (existingItem.quantity + 1 > stockLevel) {
+                alert(`Only ${stockLevel} units available!`);
                 return;
             }
             existingItem.quantity++;
         } else {
             cart.push({
-                partID: part.PartID,
-                name: part.PartName,
-                price: Number(part.SellingPrice),
+                partID: partId,
+                name: partName,
+                price: priceVal,
                 quantity: 1,
-                maxStock: part.StockQuantity
+                maxStock: stockLevel
             });
         }
         updateCartUI();
@@ -376,18 +380,6 @@
         if (event.target === productModal) closeModal();
         if (event.target === cartModal) closeCartModal();
     };
-
-    function switchRole(newRole) {
-        currentUserRole = newRole;
-        const safeRole = (currentUserRole || 'CUSTOMER').toUpperCase();
-        if (safeRole === 'RECEPTIONIST' || safeRole === 'ADMIN') {
-            document.getElementById('navCartContainer').style.display = 'none';
-        } else {
-            document.getElementById('navCartContainer').style.display = 'block';
-        }
-        closeModal();
-        filterAndSearchCatalog();
-    }
 
     async function saveStockUpdate() {
         const newStock = parseInt(document.getElementById('editStockInput').value, 10);

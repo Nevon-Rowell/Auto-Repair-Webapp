@@ -24,7 +24,7 @@ public class SparePart {
     @Column(name = "costPrice")
     private Double costPrice;
 
-    @JsonProperty("stockQty")
+    @JsonProperty("stockQuantity")
     @Column(name = "stockQuantity")
     private Integer stockQuantity;
 
