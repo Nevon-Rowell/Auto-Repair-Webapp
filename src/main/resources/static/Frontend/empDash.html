@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Job Dashboard - Autoflix</title>
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="job-styles.css">
 </head>
@@ -25,7 +23,7 @@
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#" aria-current="page">Home</a>
+                    <a class="nav-link" href="indexbackup.html">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Services</a>
@@ -401,108 +399,5 @@
         }
     }
 </script>
-<!--<script>
-    const API_URL = 'http://localhost:8080/api/jobs';
-
-    // 1. Create a New Job
-    function CreateNewJob() {
-        let plate = document.getElementById('plate-input').value;
-        let brand = document.getElementById('brand-input').value;
-        let model = document.getElementById('model-input').value;
-        let mileage = document.getElementById('mileage-input').value;
-        let selectedService = document.getElementById('service-dropdown').value;
-        let additionalNotes = document.getElementById('notes-input').value;
-
-        if(!plate || !selectedService) {
-            alert("Please provide both a License Plate and select a Service type.");
-            return;
-        }
-
-        // Combine vehicle details, service, and notes into the single jobNotes field
-        let combinedNotes = `[${selectedService}] | Vehicle: ${brand} ${model} | Mileage: ${mileage}`;
-        if (additionalNotes.trim() !== "") {
-            combinedNotes += ` - ${additionalNotes}`;
-        }
-
-        let JobData = {
-            licensePlateNO: plate,
-            jobNotes: combinedNotes,
-            jobStatus: "Pending"
-        };
-
-        fetch(API_URL, {
-            method: 'POST',
-            headers:{'Content-type': 'application/json'},
-            body: JSON.stringify(JobData)
-        })
-            .then(() => window.location.reload())
-            .catch(error => console.error('Error creating job:', error));
-    }
-    // 2. Update Job Status
-    function UpdateJobStatus(id, newStatus) {
-        let jobData = {jobStatus: newStatus};
-        fetch(`${API_URL}/${id}`, {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(jobData)
-        })
-            .then(() => window.location.reload())
-            .catch(error => console.error('Error updating status:', error));
-    }
-
-    // 3. Delete Job
-    function DeleteJob(id) {
-        if(confirm("Are you sure you want to permanently delete this job record?")) {
-            fetch(`${API_URL}/${id}`, {
-                method: 'DELETE',
-            })
-                .then(() => window.location.reload())
-                .catch(error => console.error('Error deleting job:', error));
-        }
-    }
-
-    // 4. Fetch and Display Jobs on Load
-    fetch(API_URL)
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.getElementById('job-table-body');
-            data.forEach(Job => {
-
-                // Color code the status badges
-                let badgeClass = "bg-secondary";
-                let statusLower = Job.jobStatus ? Job.jobStatus.toLowerCase() : "";
-
-                if (statusLower.includes("pending")) badgeClass = "bg-warning text-dark";
-                if (statusLower.includes("progress")) badgeClass = "bg-info text-dark";
-                if (statusLower.includes("complete")) badgeClass = "bg-success text-white";
-
-                let row = `
-                     <tr>
-                        <td class="ps-4 fw-bold" style="color: var(--af-green);">#${Job.jobID}</td>
-                        <td><span class="badge border border-light text-light p-2">${Job.licensePlateNO}</span></td>
-                        <td><span class="badge ${badgeClass} p-2">${Job.jobStatus}</span></td>
-                        <td class="text-light opacity-75">${Job.jobNotes}</td>
-                        <td class="text-end pe-4">
-                            <div class="dropdown d-inline">
-                                <button class="btn btn-sm btn-outline-green rounded-pill dropdown-toggle me-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-arrow-repeat"></i> Status
-                                </button>
-                                <ul class="dropdown-menu shadow">
-                                    <li><a class="dropdown-item" href="#" onclick="UpdateJobStatus(${Job.jobID}, 'Pending')">Pending</a></li>
-                                    <li><a class="dropdown-item" href="#" onclick="UpdateJobStatus(${Job.jobID}, 'In Progress')">In Progress</a></li>
-                                    <li><a class="dropdown-item" href="#" onclick="UpdateJobStatus(${Job.jobID}, 'Completed')">Completed</a></li>
-                                </ul>
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="DeleteJob(${Job.jobID})" title="Delete Job">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                     </tr>
-                          `;
-                tableBody.innerHTML += row;
-            });
-        })
-        .catch(error => console.error('Error fetching jobs:', error));
-</script>-->
 </body>
 </html>

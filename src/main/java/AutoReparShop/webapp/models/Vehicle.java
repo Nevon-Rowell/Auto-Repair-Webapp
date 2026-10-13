@@ -8,7 +8,7 @@ public class Vehicle {
 
     // The license plate is naturally unique, serving as the Primary Key
     @Id
-    @Column(name = "LicensePlateNO", length = 20)
+    @Column(name = "license_plateno", length = 20)
     private String licensePlateNO;
 
     @Column(name = "Brand", nullable = false, length = 50)

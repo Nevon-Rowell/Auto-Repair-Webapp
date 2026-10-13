@@ -8,13 +8,13 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface JobRepository extends JpaRepository<Job, Integer> {
-    @Query(value = "SELECT j.jobID, j.jobStatus, j.jobNotes, j.license_plateno, v.make, v.model, c.first_name, c.last_name, COALESCE(SUM(js.Cost), 0) " +
+    @Query(value = "SELECT j.jobID, j.job_status, j.job_notes, j.license_plateno, v.model, COALESCE(SUM(js.Cost), 0) " +
             "FROM job j " +
-            "JOIN Vehicle v ON j.license_plateno = v.vehicleLicensePlate " +
+            "JOIN Vehicle v ON j.license_plateno = v.license_plateno " +
             "JOIN Customer c ON v.customerID = c.customerID " +
             "LEFT JOIN JobService js ON j.jobID = js.JobID " +
             "WHERE c.customerID = :customerId " +
-            "GROUP BY j.jobID, j.jobStatus, j.jobNotes, j.license_plateno, v.make, v.model, c.first_name, c.last_name",
+            "GROUP BY j.jobID, j.job_status, j.job_notes, j.license_plateno, v.model",
             nativeQuery = true)
     List<Object[]> findCustomerJobsRaw(@Param("customerId") int customerId);
 }

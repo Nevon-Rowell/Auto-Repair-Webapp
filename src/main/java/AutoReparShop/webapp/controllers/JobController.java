@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -32,6 +33,16 @@ public class JobController {
     @PostMapping
     public Job CreateJob(@RequestBody Job NewJob){
         return jobRepository.save(NewJob);
+    }
+    @PostMapping("/{jobId}/settle")
+    public ResponseEntity<?> settleJobPayment(@PathVariable int jobId, @RequestBody Map<String, Object> payload) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+
+        job.setJobStatus("Paid");
+        jobRepository.save(job);
+
+        return ResponseEntity.ok(Map.of("message", "Payment settled successfully!"));
     }
     @PutMapping("/{id}")
     public Job UpdateJobStatus(@PathVariable int id,@RequestBody Job UpdatedJob){
