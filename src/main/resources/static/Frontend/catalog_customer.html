@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Put this inside your <head> tags -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFlix - Spare Parts Catalog</title>
+    <link rel="stylesheet" href="catalog_styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Nav-Baar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-black shadow">
+    <div class="container"> <!-- Inner container keeps nav items centered -->
+
+        <a class="navbar-brand" href="#">
+            <img src="FB_IMG_1787760750663_cropped.jpg" alt="Logo" style="height: 50px; width: auto; border-radius: 5px;">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Services</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">About Us</a></li>
+                        <li><a class="dropdown-item" href="#">Contact</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <form class="d-flex mx-auto w-50">
+                <input class="form-control me-2 rounded-pill" type="search" placeholder="Search..." aria-label="Search"/>
+                <button class="btn btn-outline-light rounded-pill px-4" type="submit">Search</button>
+            </form>
+
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                <!-- CART ICON -->
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-white cart-container" href="#">
+                        <i class="bi bi-cart3 cart-icon"></i>
+                        <span class="cart-badge">2</span>
+                    </a>
+                </li>
+                <!-- PROFILE ICON -->
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-white fs-4" href="#" data-bs-toggle="modal" data-bs-target="#loginModal" title="User Profile / Login">
+                        <i class="bi bi-person-circle"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Main content area-->
+
+<!-- cat_filters-->
+<div class = "header">
+    <div class = "filter-section">
+        <button class="filter-btn active" data-filter="all">All Parts</button>
+        <button class="filter-btn" data-filter="Engine Part">Engine</button>
+        <button class="filter-btn" data-filter="Brake Part">Brakes</button>
+        <button class="filter-btn" data-filter="Chassis Part">Chassis</button>
+        <button class="filter-btn" data-filter="Interior Part">Interior</button>
+        <button class="filter-btn" data-filter="Electrical Part">Electrical</button>
+    </div>
+<div class = "catalog-container" id="parts-catalog">
+<!--Cat_grid-->
+
+</div>
+    <!-- PRODUCT DETAILS MODAL (Pop-up) -->
+    <div id="productModal" class="modal">
+        <!-- Modal Content Box -->
+        <div class="modal-content">
+            <!-- Close Button (The 'X') -->
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+
+            <!-- Image Placeholder -->
+            <div class="modal-image-placeholder">
+                <i class="bi bi-gear"></i>
+            </div>
+
+            <!-- Product Details -->
+            <h2 id="modalTitle">Product Name</h2>
+            <p class="modal-category">Category: <span id="modalCategory">Category</span></p>
+
+            <h3 id="modalPrice">$0.00</h3>
+            <p id="modalDesc">Description goes here.</p>
+
+            <p class="modal-stock-status">Status: <span id="modalStock">In Stock</span></p>
+
+            <!-- Add to Cart Button -->
+            <button onclick="addToCart()" class="btn btn-success modal-cart-btn">
+                <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+        </div>
+    </div>
+<!-- script for filters an pop up details-->
+<script>
+    const filterBtns = document.querySelectorAll('.filter-btn');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Change the active green button color
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            //Get what we are filtering by (e.g., "Engine Part")
+            const filterValue = btn.getAttribute('data-filter');
+
+            // Grab the loaded cards NOW
+            const currentCards = document.querySelectorAll('.part-card');
+
+            //  Show or hide them based on the category
+            currentCards.forEach(card => {
+                if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    const modal = document.getElementById('productModal');
+
+    function openModal(title, category, price, desc, stock) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalCategory').innerText = category;
+        document.getElementById('modalPrice').innerText = price;
+        document.getElementById('modalDesc').innerText = desc;
+
+        const stockElement = document.getElementById('modalStock');
+        stockElement.innerText = stock;
+        stockElement.style.color = (stock === 'In Stock') ? '#2ecc71' : '#e74c3c';
+
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    let cartCount = 0;
+    function addToCart() {
+        if(document.getElementById('modalStock').innerText === 'Out of Stock'){
+            alert("Sorry, this item is currently out of stock!");
+            return;
+        }
+        cartCount++;
+        document.querySelector('.cart-badge').innerText = cartCount;
+        closeModal();
+    }
+        let allParts = []; // Stores the catalog locally for future filtering/search
+
+        document.addEventListener("DOMContentLoaded", () => {
+        loadPartsCatalog();
+    });
+
+        async function loadPartsCatalog() {
+        try {
+        // EDIT THIS URL to match your backend endpoint for parts
+        const response = await fetch('http://localhost:8080/api/parts');
+
+        if (!response.ok) throw new Error("Failed to fetch data");
+
+        allParts = await response.json();
+        renderCatalog(allParts);
+
+    } catch (error) {
+        console.error("Error loading catalog:", error);
+        document.getElementById('parts-catalog').innerHTML =
+        '<p style="grid-column: 1/-1; text-align: center;">Could not load parts from the database.</p>';
+    }
+    }
+
+    function renderCatalog(partsToRender) {
+        const catalogContainer = document.getElementById('parts-catalog');
+        catalogContainer.innerHTML = '';
+
+        // Check if database is empty
+        if (!partsToRender || partsToRender.length === 0) {
+            catalogContainer.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <h4>No parts available</h4>
+                    <p class="text-muted">There are currently no spare parts in the database inventory.</p>
+                </div>`;
+            return;
+        }
+
+        // Generate Cards using exact Java model names
+        partsToRender.forEach(part => {
+
+
+            const safeName = part.PartName || 'Unknown Part';
+
+            const stockLevel = part.StockQuantity || 0;
+            const outOfStock = stockLevel <= 0;
+
+            let safePrice = "0.00";
+            if (part.SellingPrice !== null && part.SellingPrice !== undefined) {
+                safePrice = Number(part.SellingPrice).toFixed(2);
+            }
+
+            const partCategory = part.Category || 'all';
+
+            // Button and Badge UI
+            const stockBadge = outOfStock ? `<span class="out-of-stock-badge">OUT OF STOCK</span>` : '';
+            const buttonText = outOfStock ? 'Unavailable' : 'View Details';
+            const buttonDisabled = outOfStock ? 'disabled style="background-color:#ccc; cursor:not-allowed;"' : '';
+
+            const cardHtml = `
+                <div class="part-card" data-category="${partCategory}">
+                    ${stockBadge}
+                    <div class="card-image-placeholder">
+                        <i class="bi bi-gear"></i>
+                    </div>
+                    <h3 class="part-title">${safeName}</h3>
+                    <p class="part-price">$${safePrice}</p>
+                    <button class="view-btn" onclick="openPartModal(${part.PartID})" ${buttonDisabled}>
+                        ${buttonText}
+                    </button>
+                </div>
+            `;
+
+            catalogContainer.innerHTML += cardHtml;
+        });
+    }
+    // model pop for the view details button
+    function openPartModal(partID) {
+        // Find the exact part
+        const part = allParts.find(p => p.PartID === partID);
+        if (!part) return;
+
+        // Format the data
+        const title = part.PartName || 'Unknown Part';
+        const category = part.Category || 'General';
+        const price = '$' + Number(part.SellingPrice).toFixed(2);
+        const desc = `High-quality ${category} guaranteed to fit. Order now for quick delivery!`;
+
+        const stockLevel = part.StockQuantity || 0;
+        const stockStatus = stockLevel > 0 ? 'In Stock' : 'Out of Stock';
+
+        // Send it to the modal HTML
+        openModal(title, category, price, desc, stockStatus);
+    }
+    // 1. Physically pushes the data into the HTML and shows the box
+    function openModal(title, category, price, desc, stockStatus) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalCategory').innerText = category;
+        document.getElementById('modalPrice').innerText = price;
+        document.getElementById('modalDesc').innerText = desc;
+        document.getElementById('modalStock').innerText = stockStatus;
+
+        // Show the modal (changes display from 'none' to 'flex')
+        document.getElementById('productModal').style.display = 'flex';
+    }
+
+    // 2. Hides the box when you click the 'X'
+    function closeModal() {
+        document.getElementById('productModal').style.display = 'none';
+    }
+
+    // 3. (Bonus) Hides the box if you click anywhere outside of it
+    window.onclick = function(event) {
+        const modal = document.getElementById('productModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+</script>
+</div>
+</body>
+</html>

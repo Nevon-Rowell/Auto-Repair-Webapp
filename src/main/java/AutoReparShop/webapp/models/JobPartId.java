@@ -1,27 +1,26 @@
-package AutoReparShop.webapp.models; // Adjust to your actual package
+package AutoReparShop.webapp.models;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 public class JobPartId implements Serializable {
 
-    private Long job;      // Matches the name of the Job property in JobPart
-    private Long partId;   // Matches the name of the partId property in JobPart
+    private int job;
+    private int partId;
 
     public JobPartId() {}
 
-    public JobPartId(Long job, Long partId) {
+    public JobPartId(int job, int partId) {
         this.job = job;
         this.partId = partId;
     }
 
-    // JPA requires equals() and hashCode() for composite keys
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JobPartId that = (JobPartId) o;
-        return Objects.equals(job, that.job) && Objects.equals(partId, that.partId);
+        return job == that.job && partId == that.partId;
     }
 
     @Override
@@ -29,9 +28,10 @@ public class JobPartId implements Serializable {
         return Objects.hash(job, partId);
     }
 
-    // Getters and Setters
-    public Long getJob() { return job; }
-    public void setJob(Long job) { this.job = job; }
-    public Long getPartId() { return partId; }
-    public void setPartId(Long partId) { this.partId = partId; }
+    // Getters and Setters (Updated to use int instead of Long)
+    public int getJob() { return job; }
+    public void setJob(int job) { this.job = job; }
+
+    public int getPartId() { return partId; }
+    public void setPartId(int partId) { this.partId = partId; }
 }

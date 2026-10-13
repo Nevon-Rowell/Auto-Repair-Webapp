@@ -4,17 +4,17 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Job_Part")
-@IdClass(JobPartId.class) // Links to the composite key class
+@IdClass(JobPartId.class)
 public class JobPart {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "jobID", referencedColumnName = "jobid")
+    @JoinColumn(name = "jobID", referencedColumnName = "jobID")
     private Job job;
 
     @Id
     @Column(name = "partID")
-    private Long partId; // Use a Long here assuming you don't have a Part entity class yet
+    private int partId;
 
     @Column(name = "quantityUsed")
     private Integer quantityUsed;
@@ -23,8 +23,8 @@ public class JobPart {
     public Job getJob() { return job; }
     public void setJob(Job job) { this.job = job; }
 
-    public Long getPartId() { return partId; }
-    public void setPartId(Long partId) { this.partId = partId; }
+    public int getPartId() { return partId; } // Changed to int
+    public void setPartId(int partId) { this.partId = partId; } // Changed to int
 
     public Integer getQuantityUsed() { return quantityUsed; }
     public void setQuantityUsed(Integer quantityUsed) { this.quantityUsed = quantityUsed; }
