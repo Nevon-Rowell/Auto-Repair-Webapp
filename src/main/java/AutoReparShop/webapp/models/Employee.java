@@ -10,6 +10,7 @@ public class Employee {
     private String firstName;
     private String lastName;
     private int salary;
+    @Column(name ="contactNo")
     private int contactNo;
     @Column(unique = true, nullable = false)
     private String email;
