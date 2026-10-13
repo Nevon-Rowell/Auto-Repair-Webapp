@@ -23,4 +23,5 @@ public class SparePartController {
         // This grabs all parts from your database and sends them to the HTML
         return sparePartRepository.findAll();
     }
+
 }
