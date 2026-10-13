@@ -123,7 +123,7 @@
                         <i class="bi bi-gear-wide-connected action-icon text-danger"></i>
                         <h2 class="card-title fw-bold text-dark">Spare Parts</h2>
                         <p class="card-text text-muted mb-4">Browse our extensive inventory of high-quality OEM and aftermarket spare parts for your vehicle.</p>
-                        <a href="#" class="btn btn-danger btn-lg rounded-pill px-5 mt-auto">Shop For Parts</a>
+                        <a href="catalog_customer.html" class="btn btn-danger btn-lg rounded-pill px-5 mt-auto">Shop For Parts</a>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                         <h2 class="card-title fw-bold text-dark">My Jobs</h2>
                         <p class="card-text text-muted mb-4">View all current and past jobs placed for your vehicle.</p>
                         <!-- Changed from a button to a direct link to the new page -->
-                        <a href="CustomerDash.html" class="btn btn-success btn-lg rounded-pill px-5 mt-auto">View Jobs</a>
+                        <a href="catalog_customer.html" class="btn btn-success btn-lg rounded-pill px-5 mt-auto">View Jobs</a>
                     </div>
                 </div>
             </div>
@@ -527,7 +527,7 @@ authForm.addEventListener('submit', async (e) => {
             } else if (data.role === 'MECHANIC') {
                 window.location.href = 'empDash.html';
             } else if (data.role === 'RECEPTIONIST') {
-                window.location.href = 'receptionistDash.html';
+                window.location.href = 'catalog_customer.html';
             } else if (
                 data.role === 'ADMIN' ||
                 data.role === 'DEV_ADMIN'

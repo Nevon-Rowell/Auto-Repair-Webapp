@@ -1,68 +1,66 @@
 package AutoReparShop.webapp.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "SparePart")
 public class SparePart {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     @Column(name = "partID")
-    private int PartID;
+    private Integer partID;
 
     @Column(name = "partName")
-    private String PartName;
+    private String partName;
 
-    @Column(name = "category")
-    private String Category;
+    @JsonProperty("category")
+    private String category;
 
     @Column(name = "sellingPrice")
-    private double SellingPrice;
+    private Double sellingPrice;
 
     @Column(name = "costPrice")
-    private double CostPrice;
+    private Double costPrice;
 
+    @JsonProperty("stockQty")
     @Column(name = "stockQuantity")
-    private int StockQuantity;
+    private Integer stockQuantity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supplierID", nullable = false)
-    @JsonIgnore
-    private Supplier supplier;
+    @Column(name = "isActive")
+    private Boolean isActive = true;
 
     public SparePart() {}
 
-    public SparePart(int partID, String partName, String category,
-                     double costPrice, double sellingPrice, int stockQty, Supplier supplier) {
-        this.PartID = partID;
-        this.PartName = partName;
-        this.Category = category;
-        this.CostPrice = costPrice;
-        this.SellingPrice = sellingPrice;
-        this.StockQuantity = stockQty;
-        this.supplier = supplier;
+    public SparePart(Integer partID, String partName, String category,
+                     Double costPrice, Double sellingPrice, Integer stockQuantity) {
+        this.partID = partID;
+        this.partName = partName;
+        this.category = category;
+        this.costPrice = costPrice;
+        this.sellingPrice = sellingPrice;
+        this.stockQuantity = stockQuantity;
     }
 
-    public int getPartID() { return PartID; }
-    public void setPartID(int partID) { this.PartID = partID; }
+    public Integer getPartID() { return partID; }
+    public void setPartID(Integer partID) { this.partID = partID; }
 
-    public String getPartName() { return PartName; }
-    public void setPartName(String partName) { this.PartName = partName; }
+    public String getPartName() { return partName; }
+    public void setPartName(String partName) { this.partName = partName; }
 
-    public String getCategory() { return Category; }
-    public void setCategory(String category) { this.Category = category; }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-    public double getCostPrice() { return CostPrice; }
-    public void setCostPrice(double costPrice) { this.CostPrice = costPrice; }
+    public Double getCostPrice() { return costPrice; }
+    public void setCostPrice(Double costPrice) { this.costPrice = costPrice; }
 
-    public double getSellingPrice() { return SellingPrice; }
-    public void setSellingPrice(double sellingPrice) { this.SellingPrice = sellingPrice; }
+    public Double getSellingPrice() { return sellingPrice; }
+    public void setSellingPrice(Double sellingPrice) { this.sellingPrice = sellingPrice; }
 
-    public int getStockQuantity() { return StockQuantity; }
-    public void setStockQuantity(int stockQty) { this.StockQuantity = stockQty; }
+    public Integer getStockQuantity() { return stockQuantity; }
+    public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
 
-    public Supplier getSupplier() { return supplier; }
-    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
 }
