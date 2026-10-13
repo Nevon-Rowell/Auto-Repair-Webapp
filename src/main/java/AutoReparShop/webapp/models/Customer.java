@@ -21,7 +21,7 @@ public class Customer {
 
     private Integer loyaltyPoints = 0;
 
-    @Column(name = "password_hash")
+    @Column(name = "password")
     private String passwordHash;
 
 
