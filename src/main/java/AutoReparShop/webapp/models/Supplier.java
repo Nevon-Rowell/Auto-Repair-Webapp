@@ -25,8 +25,8 @@ public class Supplier {
     @Column(name = "Email")
     private String email;
 
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL ,orphanRemoval = true)
-    private List<SparePart> spareparts = new ArrayList<>();
+   // @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL ,orphanRemoval = true)
+    //private List<SparePart> spareparts = new ArrayList<>();
 
     public Supplier() {
     }

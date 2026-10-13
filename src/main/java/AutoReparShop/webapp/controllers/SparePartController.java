@@ -3,8 +3,11 @@ package AutoReparShop.webapp.controllers;
 import AutoReparShop.webapp.models.SparePart;
 import AutoReparShop.webapp.repositories.SparePartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +22,7 @@ public class SparePartController {
 
     @GetMapping
     public List<SparePart> getAllParts() {
-        return sparePartRepository.findAll();
+        return sparePartRepository.findByIsActiveTrue();
     }
 
     //  Updates the stock balance when the manager saves a new quantity
@@ -42,5 +45,25 @@ public class SparePartController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping
+    public ResponseEntity<SparePart> addSparePart(@RequestBody SparePart newPart) {
+        try {
+            newPart.setIsActive(true); // Ensure new parts are explicitly set to active
+            SparePart savedPart = sparePartRepository.save(newPart);
+            return new ResponseEntity<>(savedPart, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteSparePart(@PathVariable Integer id) {
+        return sparePartRepository.findById(id).map(part -> {
+            part.setIsActive(false);
+            sparePartRepository.save(part);
+            return new ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
