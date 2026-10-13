@@ -1,31 +1,49 @@
 package AutoReparShop.webapp.models;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
+@IdClass(JobPart.JobPartId.class)
 @Table(name = "Job_Part")
-@IdClass(JobPartId.class)
 public class JobPart {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "jobID", referencedColumnName = "jobID")
+    @JoinColumn(name = "jobID")
     private Job job;
 
     @Id
-    @Column(name = "partID")
-    private int partId;
+    @ManyToOne
+    @JoinColumn(name = "partID")
+    private SparePart sparePart;
 
-    @Column(name = "quantityUsed")
-    private Integer quantityUsed;
+    private int quantityUsed;
 
     // Getters and Setters
     public Job getJob() { return job; }
     public void setJob(Job job) { this.job = job; }
+    public SparePart getSparePart() { return sparePart; }
+    public void setSparePart(SparePart sparePart) { this.sparePart = sparePart; }
+    public int getQuantityUsed() { return quantityUsed; }
+    public void setQuantityUsed(int quantityUsed) { this.quantityUsed = quantityUsed; }
 
-    public int getPartId() { return partId; } // Changed to int
-    public void setPartId(int partId) { this.partId = partId; } // Changed to int
+    public static class JobPartId implements Serializable {
+        private int job;
+        private int sparePart;
+        public JobPartId() {}
 
-    public Integer getQuantityUsed() { return quantityUsed; }
-    public void setQuantityUsed(Integer quantityUsed) { this.quantityUsed = quantityUsed; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            JobPartId that = (JobPartId) o;
+            return job == that.job && sparePart == that.sparePart;
+        }
+        @Override
+        public int hashCode() {
+            return Objects.hash(job, sparePart);
+        }
+    }
 }

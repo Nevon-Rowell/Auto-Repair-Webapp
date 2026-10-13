@@ -93,9 +93,7 @@
     </div>
 </div>
 
-<!-- ========================================== -->
 <!-- ADD NEW JOB MODAL (The "Separate Thing") -->
-<!-- ========================================== -->
 <div class="modal fade" id="addJobModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4">
@@ -130,13 +128,23 @@
                         <label class="form-label text-secondary small text-uppercase fw-bold">Predetermined Service</label>
                         <select class="form-select rounded-3" id="service-dropdown" required>
                             <option value="" selected disabled>Select a primary service...</option>
-                            <option value="Standard Oil Change">Standard Oil Change</option>
-                            <option value="Brake Pad Replacement">Brake Pad Replacement</option>
-                            <option value="Engine Diagnostics">Engine Diagnostics</option>
-                            <option value="Tire Rotation & Alignment">Tire Rotation & Alignment</option>
-                            <option value="Full Vehicle Restoration">Full Vehicle Restoration</option>
-                            <option value="Battery Replacement">Battery Replacement</option>
-                            <option value="Custom Repair">Other / Custom Repair</option>
+                            <script>
+                            // Fetch and populate the Service Type dropdown on load
+                                fetch('http://localhost:8080/api/services')
+                                    .then(response => response.json())
+                                    .then(data => {
+                                    const dropdown = document.getElementById('service-dropdown');
+                                    data.forEach(service => {
+                                    let option = document.createElement('option');
+                                // We use the serviceName as the value so your existing CreateNewJob logic keeps working
+                                    option.value = service.serviceName;
+                                // Displays the name and the base price to the employee
+                                    option.textContent = `${service.serviceName} ($${service.basePrice.toFixed(2)})`;
+                                    dropdown.appendChild(option);
+                                    });
+                                })
+                            .catch(error => console.error('Error fetching service types:', error));
+                            </script>
                         </select>
                     </div>
 
@@ -153,6 +161,44 @@
         </div>
     </div>
 </div>
+<!-- ADD PART/SERVICE MODAL -->
+<div class="modal fade" id="addItemModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 bg-dark text-light border border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold text-success"><i class="bi bi-box-seam me-2"></i>Add Item to Job</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" id="active-job-id">
+
+                <div class="mb-3">
+                    <label class="form-label text-secondary small text-uppercase fw-bold">Item Type</label>
+                    <select class="form-select bg-black text-light border-secondary rounded-3" id="item-type-dropdown" onchange="toggleItemType()">
+                        <option value="service">Garage Service</option>
+                        <option value="part">Spare Part</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-secondary small text-uppercase fw-bold">Select Item</label>
+                    <select class="form-select bg-black text-light border-secondary rounded-3" id="catalog-dropdown" required>
+                        <!-- Populated by JavaScript -->
+                    </select>
+                </div>
+
+                <div class="mb-3" id="quantity-container" class="d-none">
+                    <label class="form-label text-secondary small text-uppercase fw-bold">Quantity Used</label>
+                    <input type="number" class="form-control bg-black text-light border-secondary rounded-3" id="item-quantity" value="1" min="1">
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-green rounded-pill px-4" onclick="SubmitJobItem()">Add to Job</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <!-- Bootstrap JS -->
@@ -160,6 +206,202 @@
 
 <!-- Application Logic -->
 <script>
+    const API_URL = 'http://localhost:8080/api/jobs';
+
+    // Global catalogs to prevent re-fetching every time
+    let availableServices = [];
+    let availableParts = [];
+
+    // Fetch Catalogs on Load
+    fetch('http://localhost:8080/api/services').then(res => res.json()).then(data => availableServices = data);
+    fetch('http://localhost:8080/api/spareparts').then(res => res.json()).then(data => availableParts = data);
+
+    // 1. Fetch and Display Jobs with Expandable Rows
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('job-table-body');
+            tableBody.innerHTML = ""; // Clear table first
+
+            data.forEach(Job => {
+                let badgeClass = "bg-secondary";
+                let statusLower = Job.jobStatus ? Job.jobStatus.toLowerCase() : "";
+
+                if (statusLower.includes("pending")) badgeClass = "bg-warning text-dark";
+                if (statusLower.includes("progress")) badgeClass = "bg-info text-dark";
+                if (statusLower.includes("complete")) badgeClass = "bg-success text-white";
+
+                let rowHtml = `
+                 <!-- Main Clickable Row -->
+                 <tr data-bs-toggle="collapse" data-bs-target="#job-details-${Job.jobID}" style="cursor: pointer;" onclick="LoadJobDetails(${Job.jobID})">
+                    <td class="ps-4 fw-bold" style="color: var(--af-green);">#${Job.jobID}</td>
+                    <td><span class="badge border border-light text-light p-2">${Job.licensePlateNO}</span></td>
+                    <td><span class="badge ${badgeClass} p-2">${Job.jobStatus}</span></td>
+                    <td class="text-light opacity-75">${Job.jobNotes}</td>
+                    <td class="text-end pe-4" onclick="event.stopPropagation();">
+                        <div class="dropdown d-inline">
+                            <button class="btn btn-sm btn-outline-green rounded-pill dropdown-toggle me-2" data-bs-toggle="dropdown">
+                                Status
+                            </button>
+                            <ul class="dropdown-menu shadow">
+                                <li><a class="dropdown-item" href="#" onclick="UpdateJobStatus(${Job.jobID}, 'Pending')">Pending</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="UpdateJobStatus(${Job.jobID}, 'In Progress')">In Progress</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="UpdateJobStatus(${Job.jobID}, 'Completed')">Completed</a></li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="DeleteJob(${Job.jobID})"><i class="bi bi-trash"></i></button>
+                    </td>
+                 </tr>
+
+                 <!-- Hidden Details Row -->
+                 <tr class="collapse bg-dark" id="job-details-${Job.jobID}">
+                     <td colspan="5" class="p-4 border-bottom border-secondary">
+                         <div class="d-flex justify-content-between mb-3">
+                             <h6 class="text-success fw-bold m-0"><i class="bi bi-tools me-2"></i>Parts & Services Breakdown</h6>
+                             <button class="btn btn-sm btn-success rounded-pill" onclick="OpenItemModal(${Job.jobID})">
+                                 <i class="bi bi-plus"></i> Add Item
+                             </button>
+                         </div>
+                         <div class="row">
+                             <div class="col-md-6">
+                                 <strong class="text-light">Services Rendered</strong>
+                                 <ul class="list-group list-group-flush rounded mt-2" id="services-list-${Job.jobID}">
+                                     <li class="list-group-item bg-black text-secondary border-secondary">Loading...</li>
+                                 </ul>
+                             </div>
+                             <div class="col-md-6">
+                                 <strong class="text-light">Parts Used</strong>
+                                 <ul class="list-group list-group-flush rounded mt-2" id="parts-list-${Job.jobID}">
+                                     <li class="list-group-item bg-black text-secondary border-secondary">Loading...</li>
+                                 </ul>
+                             </div>
+                         </div>
+                     </td>
+                 </tr>
+            `;
+                tableBody.innerHTML += rowHtml;
+            });
+        });
+
+    // 2. Load Job Parts and Services dynamically when a row is clicked
+    function LoadJobDetails(jobID) {
+        // Fetch Services
+        fetch(`http://localhost:8080/api/jobs/${jobID}/services`)
+            .then(res => res.json())
+            .then(services => {
+                const list = document.getElementById(`services-list-${jobID}`);
+                list.innerHTML = services.length ? "" : `<li class="list-group-item bg-black text-secondary border-secondary">No services logged yet.</li>`;
+                services.forEach(s => list.innerHTML += `<li class="list-group-item bg-black text-light border-secondary d-flex justify-content-between"><span>${s.serviceName}</span> <span class="text-success">$${s.cost.toFixed(2)}</span></li>`);
+            }).catch(() => document.getElementById(`services-list-${jobID}`).innerHTML = `<li class="list-group-item bg-black text-danger border-secondary">Failed to load services.</li>`);
+
+        // Fetch Parts
+        fetch(`http://localhost:8080/api/jobs/${jobID}/parts`)
+            .then(res => res.json())
+            .then(parts => {
+                const list = document.getElementById(`parts-list-${jobID}`);
+                list.innerHTML = parts.length ? "" : `<li class="list-group-item bg-black text-secondary border-secondary">No parts logged yet.</li>`;
+                parts.forEach(p => list.innerHTML += `<li class="list-group-item bg-black text-light border-secondary d-flex justify-content-between"><span>${p.quantity}x ${p.partName}</span> <span class="text-success">$${(p.quantity * p.price).toFixed(2)}</span></li>`);
+            }).catch(() => document.getElementById(`parts-list-${jobID}`).innerHTML = `<li class="list-group-item bg-black text-danger border-secondary">Failed to load parts.</li>`);
+    }
+
+    // 3. Modal Controls for Adding Items
+    function OpenItemModal(jobID) {
+        document.getElementById('active-job-id').value = jobID;
+        document.getElementById('item-type-dropdown').value = 'service';
+        toggleItemType();
+        var myModal = new bootstrap.Modal(document.getElementById('addItemModal'));
+        myModal.show();
+    }
+
+    function toggleItemType() {
+        const type = document.getElementById('item-type-dropdown').value;
+        const catalog = document.getElementById('catalog-dropdown');
+        const qtyContainer = document.getElementById('quantity-container');
+
+        catalog.innerHTML = "";
+        if (type === "service") {
+            qtyContainer.classList.add("d-none"); // Hide quantity for services
+            availableServices.forEach(s => catalog.innerHTML += `<option value="${s.serviceID}">${s.serviceName} ($${s.basePrice})</option>`);
+        } else {
+            qtyContainer.classList.remove("d-none"); // Show quantity for parts
+            availableParts.forEach(p => catalog.innerHTML += `<option value="${p.partID}">${p.name} ($${p.price})</option>`);
+        }
+    }
+
+    function SubmitJobItem() {
+        const jobID = document.getElementById('active-job-id').value;
+        const type = document.getElementById('item-type-dropdown').value;
+        const itemID = document.getElementById('catalog-dropdown').value;
+
+        if (type === "service") {
+            let payload = { serviceID: parseInt(itemID) };
+            fetch(`http://localhost:8080/api/jobs/${jobID}/services`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            }).then(() => {
+                bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
+                LoadJobDetails(jobID); // Refresh lists instantly
+            });
+        } else {
+            const qty = document.getElementById('item-quantity').value;
+            let payload = { partID: parseInt(itemID), quantityUsed: parseInt(qty) };
+            fetch(`http://localhost:8080/api/jobs/${jobID}/parts`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            }).then(() => {
+                bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
+                LoadJobDetails(jobID);
+            });
+        }
+    }
+
+    // 4. Basic Job CRUD Operations
+    function CreateNewJob() {
+        let plate = document.getElementById('plate-input').value;
+        let brand = document.getElementById('brand-input').value;
+        let model = document.getElementById('model-input').value;
+        let mileage = document.getElementById('mileage-input').value;
+        let selectedService = document.getElementById('service-dropdown').value;
+        let additionalNotes = document.getElementById('notes-input').value;
+
+        if(!plate || !selectedService) {
+            alert("Please provide both a License Plate and select a Service type.");
+            return;
+        }
+
+        let combinedNotes = `[${selectedService}] | Vehicle: ${brand} ${model} | Mileage: ${mileage}`;
+        if (additionalNotes.trim() !== "") combinedNotes += ` - ${additionalNotes}`;
+
+        let JobData = {
+            licensePlateNO: plate,
+            jobNotes: combinedNotes,
+            jobStatus: "Pending"
+        };
+
+        fetch(API_URL, {
+            method: 'POST',
+            headers:{'Content-type': 'application/json'},
+            body: JSON.stringify(JobData)
+        }).then(() => window.location.reload());
+    }
+
+    function UpdateJobStatus(id, newStatus) {
+        fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({jobStatus: newStatus})
+        }).then(() => window.location.reload());
+    }
+
+    function DeleteJob(id) {
+        if(confirm("Are you sure you want to permanently delete this job record?")) {
+            fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => window.location.reload());
+        }
+    }
+</script>
+<!--<script>
     const API_URL = 'http://localhost:8080/api/jobs';
 
     // 1. Create a New Job
@@ -261,6 +503,6 @@
             });
         })
         .catch(error => console.error('Error fetching jobs:', error));
-</script>
+</script>-->
 </body>
 </html>

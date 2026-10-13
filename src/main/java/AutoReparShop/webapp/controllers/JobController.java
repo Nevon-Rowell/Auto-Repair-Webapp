@@ -1,9 +1,9 @@
 package AutoReparShop.webapp.controllers;
 
-import AutoReparShop.webapp.models.CustDashDTO;
-import AutoReparShop.webapp.models.Job;
-import AutoReparShop.webapp.models.Sale;
+import AutoReparShop.webapp.models.*;
 import AutoReparShop.webapp.repositories.JobRepository;
+import AutoReparShop.webapp.repositories.ServiceTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +13,14 @@ import java.util.List;
 @RequestMapping("/api/jobs")
 public class JobController {
     private final JobRepository jobRepository;
+    @Autowired
+    private AutoReparShop.webapp.repositories.JobServiceRepository jobServiceRepository;
+    @Autowired
+    private AutoReparShop.webapp.repositories.JobPartRepository jobPartRepository;
+    @Autowired
+    private AutoReparShop.webapp.repositories.ServiceTypeRepository serviceTypeRepository;
+    @Autowired
+    private AutoReparShop.webapp.repositories.SparePartRepository sparePartRepository;
 
     public JobController(JobRepository jobRepository) {
         this.jobRepository = jobRepository;
@@ -53,5 +61,64 @@ public class JobController {
             dashboardData.add(new CustDashDTO(jobID, status, notes, plate, vehicleName, customerName, price));
         }
         return dashboardData;
+    }
+    // --- BRIDGE TABLE ENDPOINTS -
+    // 1. Add a Service to a Job
+    @GetMapping("/{jobId}/services")
+    public List<java.util.Map<String, Object>> getJobServices(@PathVariable int jobId) {
+        List<JobService> services = jobServiceRepository.findByJob_JobID(jobId);
+        List<java.util.Map<String, Object>> response = new java.util.ArrayList<>();
+
+        for (JobService js : services) {
+            response.add(java.util.Map.of(
+                    "serviceName", js.getServiceType().getServiceName(),
+                    "cost", js.getCost()
+            ));
+        }
+        return response;
+    }
+
+    @GetMapping("/{jobId}/parts")
+    public List<java.util.Map<String, Object>> getJobParts(@PathVariable int jobId) {
+        List<JobPart> parts = jobPartRepository.findByJob_JobID(jobId);
+        List<java.util.Map<String, Object>> response = new java.util.ArrayList<>();
+
+        for (JobPart jp : parts) {
+            response.add(java.util.Map.of(
+                    "partName", jp.getSparePart().getPartName(),
+                    "quantity", jp.getQuantityUsed(),
+                    "price", jp.getSparePart().getCostPrice()
+            ));
+        }
+        return response;
+    }
+
+    // --- ADD ITEMS TO ACTIVE JOB ---
+    @PostMapping("/{jobId}/services")
+    public org.springframework.http.ResponseEntity<?> addServiceToJob(@PathVariable int jobId, @RequestBody java.util.Map<String, Integer> payload) {
+        Job job = jobRepository.findById(jobId).orElseThrow();
+        ServiceType service = serviceTypeRepository.findById(payload.get("serviceID")).orElseThrow();
+
+        JobService js = new JobService();
+        js.setJob(job);
+        js.setServiceType(service);
+        js.setCost(service.getBasePrice()); // Pulls default cost from ServiceType catalog
+
+        jobServiceRepository.save(js);
+        return org.springframework.http.ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{jobId}/parts")
+    public org.springframework.http.ResponseEntity<?> addPartToJob(@PathVariable int jobId, @RequestBody java.util.Map<String, Integer> payload) {
+        Job job = jobRepository.findById(jobId).orElseThrow();
+        SparePart part = sparePartRepository.findById(payload.get("partID")).orElseThrow();
+
+        JobPart jp = new JobPart();
+        jp.setJob(job);
+        jp.setSparePart(part);
+        jp.setQuantityUsed(payload.get("quantityUsed"));
+
+        jobPartRepository.save(jp);
+        return org.springframework.http.ResponseEntity.ok().build();
     }
 }
