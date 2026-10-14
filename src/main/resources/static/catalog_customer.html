@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoFlix - Spare Parts Catalog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="catalog_styles.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-black shadow">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="FB_IMG_1787760750663_cropped.jpg" alt="Logo" style="height: 50px; width: auto; border-radius: 5px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
+            </ul>
+
+            <form class="d-flex mx-auto w-50" onsubmit="event.preventDefault(); filterAndSearchCatalog();">
+                <input class="form-control me-2 rounded-pill" type="search" id="searchInput" placeholder="Search parts..." oninput="filterAndSearchCatalog()"/>
+                <button class="btn btn-outline-light rounded-pill px-4" type="submit">Search</button>
+            </form>
+
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                <li class="nav-item ms-3" id="navCartContainer">
+                    <a class="nav-link text-white cart-container" href="javascript:void(0)" onclick="openCartModal()">
+                        <i class="bi bi-cart3 cart-icon"></i>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-white fs-4" href="#"><i class="bi bi-person-circle"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Filters -->
+<div class="header">
+    <div class="filter-section">
+        <button class="filter-btn active" data-filter="all">All Parts</button>
+        <button class="filter-btn" data-filter="Engine Part">Engine</button>
+        <button class="filter-btn" data-filter="Brake Part">Brakes</button>
+        <button class="filter-btn" data-filter="Chassis Part">Chassis</button>
+        <button class="filter-btn" data-filter="Interior Part">Interior</button>
+        <button class="filter-btn" data-filter="Electrical Part">Electrical</button>
+    </div>
+
+    <!-- Catalog Grid -->
+    <div class="catalog-container" id="parts-catalog"></div>
+</div>
+
+<!-- PRODUCT DETAILS MODAL -->
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div class="modal-image-placeholder"><i class="bi bi-gear"></i></div>
+
+        <h2 id="modalTitle">Product Name</h2>
+        <p class="modal-category">Category: <span id="modalCategory">Category</span></p>
+        <h3 id="modalPrice">$0.00</h3>
+        <p id="modalDesc">Description goes here.</p>
+        <p class="modal-stock-status">Status: <span id="modalStock">In Stock</span></p>
+
+        <!-- CUSTOMER CONTROLS -->
+        <div id="customerControls">
+            <button onclick="addToCart()" class="btn btn-success modal-cart-btn">
+                <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+        </div>
+
+        <!-- MANAGER CONTROLS -->
+        <div id="managerControls" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+            <label class="fw-bold mb-2"><i class="bi bi-box-seam"></i> Update Stock Balance:</label>
+            <div class="d-flex gap-2">
+                <input type="number" id="editStockInput" class="form-control" min="0">
+                <button onclick="saveStockUpdate()" class="btn btn-primary w-50">Save Stock</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SHOPPING CART MODAL -->
+<div id="cartModal" class="modal">
+    <div class="modal-content cart-modal-content">
+        <span class="modal-close" onclick="closeCartModal()">&times;</span>
+        <h3 class="mb-3"><i class="bi bi-cart3"></i> Your Shopping Cart</h3>
+
+        <div id="cartItemsContainer" class="cart-items-container">
+            <p class="text-muted text-center my-4">Your cart is currently empty.</p>
+        </div>
+
+        <div class="cart-footer">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="fs-5 fw-bold">Total:</span>
+                <span id="cartTotalPrice" class="fs-4 fw-bold text-success">$0.00</span>
+            </div>
+            <button onclick="checkout()" id="checkoutBtn" class="btn btn-success modal-cart-btn" disabled>
+                Checkout <i class="bi bi-arrow-right-circle ms-1"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SPARE PARTS PAYMENT MODAL -->
+<div class="modal fade" id="sparePartsPaymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 bg-dark text-light border border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold text-success"><i class="bi bi-credit-card me-2"></i>Checkout & Payment</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="p-3 bg-black rounded-3 mb-4 border border-secondary text-center">
+                    <span class="text-secondary small d-block text-uppercase">Total Amount Due</span>
+                    <h2 class="text-success fw-bold m-0" id="modalCheckoutTotal">$0.00</h2>
+                </div>
+
+                <form id="partsPaymentForm">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-bold">PAYMENT METHOD</label>
+                        <select class="form-select bg-black text-light border-secondary rounded-3" id="paymentMethodSelect">
+                            <option value="CREDIT_CARD">Credit / Debit Card</option>
+                            <option value="CASH">Cash on Pickup</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-bold">CARDHOLDER NAME</label>
+                        <input type="text" class="form-control bg-black text-light border-secondary rounded-3" placeholder="Jane Doe" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-bold">CARD NUMBER</label>
+                        <input type="text" class="form-control bg-black text-light border-secondary rounded-3" placeholder="4111 •••• •••• 1111" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-secondary small fw-bold">EXPIRY DATE</label>
+                            <input type="text" class="form-control bg-black text-light border-secondary rounded-3" placeholder="MM/YY" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-secondary small fw-bold">CVV</label>
+                            <input type="password" class="form-control bg-black text-light border-secondary rounded-3" placeholder="123" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success rounded-pill px-4" onclick="processPartsPayment()">Confirm & Pay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JAVASCRIPT -->
+<script>
+    let currentUserRole = sessionStorage.getItem('userRole') || 'CUSTOMER';
+    let allParts = [];
+    let cart = [];
+    let activeCategory = 'all';
+    let currentModalPartID = null;
+
+    const productModal = document.getElementById('productModal');
+    const cartModal = document.getElementById('cartModal');
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedRole = sessionStorage.getItem('userRole') || 'CUSTOMER';
+        currentUserRole = savedRole.toUpperCase();
+
+        if (currentUserRole === 'RECEPTIONIST' || currentUserRole === 'ADMIN') {
+            document.getElementById('navCartContainer').style.display = 'none';
+        } else {
+            document.getElementById('navCartContainer').style.display = 'block';
+        }
+        loadPartsCatalog();
+    });
+
+    async function loadPartsCatalog() {
+        try {
+            const response = await fetch('http://localhost:8080/api/parts');
+            if (!response.ok) throw new Error("Failed to fetch data");
+            allParts = await response.json();
+            renderCatalog(allParts);
+        } catch (error) {
+            console.error("Error loading catalog:", error);
+            document.getElementById('parts-catalog').innerHTML =
+                '<p style="grid-column: 1/-1; text-align: center;">Could not load parts from the database.</p>';
+        }
+    }
+
+    function renderCatalog(partsToRender) {
+        const catalogContainer = document.getElementById('parts-catalog');
+        catalogContainer.innerHTML = '';
+
+        if (!partsToRender || partsToRender.length === 0) {
+            catalogContainer.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <h4>No matching parts found</h4>
+                    <p class="text-muted">Try adjusting your search or category filter.</p>
+                </div>`;
+            return;
+        }
+
+        partsToRender.forEach(part => {
+            const partId = part.partID ?? part.partId ?? part.PartID;
+            const safeName = part.partName || part.PartName || 'Unknown Part';
+
+            // Comprehensive fallback for stock property name
+            const stockLevel = part.stockQuantity ?? part.StockQuantity ?? part.stock_quantity ?? part.quantity ?? part.stock ?? 0;
+            const outOfStock = stockLevel <= 0;
+
+            let safePrice = "0.00";
+            const priceVal = part.sellingPrice ?? part.SellingPrice ?? part.price;
+            if (priceVal !== null && priceVal !== undefined) {
+                safePrice = Number(priceVal).toFixed(2);
+            }
+
+            const partCategory = part.category || part.Category || 'all';
+            const stockBadge = outOfStock ? `<span class="out-of-stock-badge">OUT OF STOCK</span>` : '';
+
+            let buttonText = outOfStock ? 'Unavailable' : 'View Details';
+            let buttonDisabled = outOfStock ? 'disabled style="background-color:#ccc; cursor:not-allowed;"' : '';
+            const safeRole = (currentUserRole || 'CUSTOMER').toUpperCase();
+
+            if (safeRole === 'RECEPTIONIST' || safeRole === 'ADMIN') {
+                buttonDisabled = '';
+                buttonText = outOfStock ? 'Restock Item' : 'Manage Part';
+            }
+
+            catalogContainer.innerHTML += `
+                <div class="part-card" data-category="${partCategory}">
+                    ${stockBadge}
+                    <div class="card-image-placeholder"><i class="bi bi-gear"></i></div>
+                    <h3 class="part-title">${safeName}</h3>
+                    <p class="part-price">$${safePrice}</p>
+                    <button class="view-btn" onclick="openPartModal(${partId})" ${buttonDisabled}>
+                        ${buttonText}
+                    </button>
+                </div>
+            `;
+        });
+    }
+
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeCategory = btn.getAttribute('data-filter');
+            filterAndSearchCatalog();
+        });
+    });
+
+    function filterAndSearchCatalog() {
+        const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+        const filteredParts = allParts.filter(part => {
+            const partName = (part.partName || part.PartName || '').toLowerCase();
+            const partCategory = (part.category || part.Category || '');
+            const matchesCategory = (activeCategory === 'all') || (partCategory === activeCategory);
+            const matchesSearch = partName.includes(searchQuery) || partCategory.toLowerCase().includes(searchQuery);
+            return matchesCategory && matchesSearch;
+        });
+        renderCatalog(filteredParts);
+    }
+
+    function openPartModal(partID) {
+        const part = allParts.find(p => (p.partID ?? p.partId ?? p.PartID) === partID);
+        if (!part) return;
+
+        currentModalPartID = part.partID ?? part.partId ?? p.PartID;
+
+        const title = part.partName || part.PartName || 'Unknown Part';
+        const category = part.category || part.Category || 'General';
+        const priceVal = part.sellingPrice ?? part.SellingPrice ?? part.price ?? 0;
+        const price = '$' + Number(priceVal).toFixed(2);
+        const stockLevel = part.stockQuantity ?? part.StockQuantity ?? part.stock_quantity ?? part.quantity ?? part.stock ?? 0;
+        const desc = `High-quality ${category} guaranteed to fit (${stockLevel} available in stock).`;
+        const stockStatus = stockLevel > 0 ? 'In Stock' : 'Out of Stock';
+
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalCategory').innerText = category;
+        document.getElementById('modalPrice').innerText = price;
+        document.getElementById('modalDesc').innerText = desc;
+
+        const stockElement = document.getElementById('modalStock');
+        stockElement.innerText = stockStatus;
+        stockElement.style.color = (stockStatus === 'In Stock') ? '#2ecc71' : '#e74c3c';
+
+        const safeRole = (currentUserRole || 'CUSTOMER').toUpperCase();
+
+        if (safeRole === 'RECEPTIONIST' || safeRole === 'ADMIN') {
+            document.getElementById('customerControls').style.display = 'none';
+            document.getElementById('managerControls').style.display = 'block';
+            document.getElementById('editStockInput').value = stockLevel;
+        } else {
+            document.getElementById('customerControls').style.display = 'block';
+            document.getElementById('managerControls').style.display = 'none';
+        }
+
+        productModal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        productModal.style.display = 'none';
+    }
+
+    function addToCart() {
+        if (!currentModalPartID) return;
+        const part = allParts.find(p => (p.partID ?? p.partId ?? p.PartID) === currentModalPartID);
+        const stockLevel = part ? (part.stockQuantity ?? part.StockQuantity ?? part.stock_quantity ?? part.quantity ?? part.stock ?? 0) : 0;
+
+        if (!part || stockLevel <= 0) {
+            alert("Sorry, this item is currently out of stock!");
+            return;
+        }
+
+        const partId = part.partID ?? part.partId ?? part.PartID;
+        const partName = part.partName || part.PartName || 'Unknown Part';
+        const priceVal = Number(part.sellingPrice ?? part.SellingPrice ?? part.price ?? 0);
+
+        const existingItem = cart.find(item => item.partID === partId);
+        if (existingItem) {
+            if (existingItem.quantity + 1 > stockLevel) {
+                alert(`Only ${stockLevel} units available!`);
+                return;
+            }
+            existingItem.quantity++;
+        } else {
+            cart.push({
+                partID: partId,
+                name: partName,
+                price: priceVal,
+                quantity: 1,
+                maxStock: stockLevel
+            });
+        }
+        updateCartUI();
+        closeModal();
+    }
+
+    function updateCartUI() {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById('cartBadge').innerText = totalItems;
+
+        const container = document.getElementById('cartItemsContainer');
+        const totalEl = document.getElementById('cartTotalPrice');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+
+        if (cart.length === 0) {
+            container.innerHTML = '<p class="text-muted text-center my-4">Your cart is empty.</p>';
+            totalEl.innerText = '$0.00';
+            checkoutBtn.disabled = true;
+            return;
+        }
+
+        checkoutBtn.disabled = false;
+        container.innerHTML = '';
+        let grandTotal = 0;
+
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            grandTotal += itemTotal;
+
+            container.innerHTML += `
+                <div class="cart-item-row" style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <div>
+                        <h6 style="margin: 0;">${item.name}</h6>
+                        <small class="text-muted">$${item.price.toFixed(2)} each</small>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button class="btn btn-sm btn-light" onclick="changeCartQty(${item.partID}, -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="btn btn-sm btn-light" onclick="changeCartQty(${item.partID}, 1)">+</button>
+                        <strong style="min-width: 60px; text-align: right;">$${itemTotal.toFixed(2)}</strong>
+                        <button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.partID})"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+            `;
+        });
+        totalEl.innerText = '$' + grandTotal.toFixed(2);
+    }
+
+    function changeCartQty(partID, change) {
+        const item = cart.find(i => i.partID === partID);
+        if (!item) return;
+        const newQty = item.quantity + change;
+        if (newQty <= 0) {
+            removeFromCart(partID);
+        } else if (newQty > item.maxStock) {
+            alert(`Cannot exceed available stock (${item.maxStock})!`);
+        } else {
+            item.quantity = newQty;
+            updateCartUI();
+        }
+    }
+
+    function removeFromCart(partID) {
+        cart = cart.filter(i => i.partID !== partID);
+        updateCartUI();
+    }
+
+    function openCartModal() {
+        updateCartUI();
+        cartModal.style.display = 'flex';
+    }
+
+    function closeCartModal() {
+        cartModal.style.display = 'none';
+    }
+
+    function checkout() {
+        if (cart.length === 0) return;
+        let grandTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        document.getElementById('modalCheckoutTotal').innerText = '$' + grandTotal.toFixed(2);
+        closeCartModal();
+        let paymentModal = new bootstrap.Modal(document.getElementById('sparePartsPaymentModal'));
+        paymentModal.show();
+    }
+
+    function processPartsPayment() {
+        const customerId = sessionStorage.getItem('userID') || null;
+        const method = document.getElementById('paymentMethodSelect').value;
+
+        const payload = {
+            customerId: customerId ? parseInt(customerId) : null,
+            paymentMethod: method,
+            items: cart.map(i => ({
+                partID: i.partID,
+                quantity: i.quantity,
+                price: i.price
+            }))
+        };
+
+        fetch('http://localhost:8080/api/payments/checkout-parts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Payment failed or out of stock");
+                return res.json();
+            })
+            .then(data => {
+                alert(data.message + " (Sale ID #" + data.saleID + ")");
+                cart = [];
+                updateCartUI();
+                loadPartsCatalog();
+                bootstrap.Modal.getInstance(document.getElementById('sparePartsPaymentModal')).hide();
+            })
+            .catch(err => {
+                console.error("Checkout error:", err);
+                alert("Payment failed: " + err.message);
+            });
+    }
+
+    window.onclick = function(event) {
+        if (event.target === productModal) closeModal();
+        if (event.target === cartModal) closeCartModal();
+    };
+
+    async function saveStockUpdate() {
+        const newStock = parseInt(document.getElementById('editStockInput').value, 10);
+
+        if (!currentModalPartID) return;
+        if (isNaN(newStock) || newStock < 0) {
+            alert("Please enter a valid, non-negative stock quantity.");
+            return;
+        }
+
+        try {
+            const updatedPart = { stockQuantity: newStock };
+
+            const response = await fetch(`http://localhost:8080/api/parts/${currentModalPartID}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedPart)
+            });
+
+            if (!response.ok) throw new Error("Failed to update stock on the server.");
+
+            alert("Stock updated successfully!");
+            loadPartsCatalog();
+            closeModal();
+        } catch (error) {
+            console.error("Error updating stock:", error);
+            alert("Could not update stock. Check your Java console.");
+        }
+    }
+</script>
+</body>
+</html>
