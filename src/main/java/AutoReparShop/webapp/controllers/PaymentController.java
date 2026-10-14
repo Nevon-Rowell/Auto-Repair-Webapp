@@ -3,6 +3,7 @@ package AutoReparShop.webapp.controllers;
 import AutoReparShop.webapp.models.*;
 import AutoReparShop.webapp.repositories.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,29 +41,36 @@ public class PaymentController {
 
     // 1. Settle Job & Transfer to Sale Table
     @PostMapping("/settle-job/{jobId}")
+    @Transactional
     public ResponseEntity<?> settleJobPayment(@PathVariable int jobId, @RequestBody Map<String, Object> payload) {
         Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() -> new RuntimeException("Job not found with ID: " + jobId));
 
         // Calculate total service + part costs logged for this job
         double serviceTotal = 0.0;
         List<JobService> services = jobServiceRepository.findByJob_JobID(jobId);
-        for (JobService js : services) {
-            serviceTotal += js.getCost();
+        if (services != null) {
+            for (JobService js : services) {
+                serviceTotal += js.getCost();
+            }
         }
 
         double partsTotal = 0.0;
         List<JobPart> parts = jobPartRepository.findByJob_JobID(jobId);
-        for (JobPart jp : parts) {
-            if (jp.getSparePart() != null) {
-                partsTotal += jp.getQuantityUsed() * jp.getSparePart().getCostPrice();
+        if (parts != null) {
+            for (JobPart jp : parts) {
+                if (jp.getSparePart() != null) {
+                    partsTotal += jp.getQuantityUsed() * jp.getSparePart().getCostPrice();
+                }
             }
         }
 
         double totalAmount = serviceTotal + partsTotal;
-        if (payload.containsKey("amount") && payload.get("amount") != null) {
+        if (payload != null && payload.containsKey("amount") && payload.get("amount") != null) {
             double customAmount = Double.parseDouble(payload.get("amount").toString());
-            if (customAmount > 0) totalAmount = customAmount;
+            if (customAmount > 0) {
+                totalAmount = customAmount;
+            }
         }
 
         // Trace Customer via Vehicle License Plate
@@ -78,15 +86,16 @@ public class PaymentController {
         job.setJobStatus("Completed");
         jobRepository.save(job);
 
-        // Record/Update in Sale table
-        Sale sale = saleRepository.findByJobID(jobId).orElse(new Sale());
+        // Record/Update in Sale table (Fixed: findByJobId casing)
+        Sale sale = saleRepository.findByJobId(jobId).orElse(new Sale());
         sale.setJobID(jobId);
         sale.setTotalAmount(totalAmount);
         sale.setCustomerID(customerId);
         Sale savedSale = saleRepository.save(sale);
 
         // Log Payment
-        String method = payload.getOrDefault("paymentMethod", "CARD").toString();
+        String method = (payload != null && payload.containsKey("paymentMethod"))
+                ? payload.get("paymentMethod").toString() : "CARD";
         Payment payment = new Payment(method, totalAmount, savedSale.getSaleID());
         paymentRepository.save(payment);
 
@@ -99,7 +108,13 @@ public class PaymentController {
 
     // 2. Checkout Spare Parts
     @PostMapping("/checkout-parts")
+    @Transactional
     public ResponseEntity<?> checkoutSpareParts(@RequestBody Map<String, Object> payload) {
+        if (payload == null || !payload.containsKey("items")) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Cart is empty"));
+        }
+
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> items = (List<Map<String, Object>>) payload.get("items");
         if (items == null || items.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Cart is empty"));
